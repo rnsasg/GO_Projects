@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	database "github.com/rnsasg/Go_Projects/go-graphql-hackernews/internal/pkg/db/mysql"
+	database "github.com/rnsasg/GO_Projects/go-graphql-hackernews/internal/pkg/db/mysql"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"

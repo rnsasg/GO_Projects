@@ -1,11 +1,10 @@
 package links
 
 import (
-	database "command-line-arguments/Users/kumarro/go/src/Go_Projects/go-graphql-hackernews/internal/pkg/db/mysql/mysql.go"
 	"log"
 
-	database "github.com/rnsasg/Go_Projects/go-graphql-hackernews/internal/pkg/db/mysql"
-	"github.com/rnsasg/Go_Projects/go-graphql-hackernews/internal/users"
+	database "github.com/rnsasg/GO_Projects/go-graphql-hackernews/internal/pkg/db/mysql"
+	users "github.com/rnsasg/GO_Projects/go-graphql-hackernews/internal/users"
 )
 
 type Link struct {

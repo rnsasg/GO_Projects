@@ -10,18 +10,16 @@ import (
 	"strconv"
 
 	"github.com/rnsasg/GO_Projects/go-graphql-hackernews/graph/model"
+	"github.com/rnsasg/GO_Projects/go-graphql-hackernews/internal/links"
 )
 
 // CreateLink is the resolver for the createLink field.
 func (r *mutationResolver) CreateLink(ctx context.Context, input model.NewLink) (*model.Link, error) {
 	var link model.Link
-	// var user model.User
-
 	link.Address = input.Address
 	link.Address = input.Title
-	//user.Name = "Roushan"
-	//link.User = &user
-	linkID := link.Save()
+	linkID := links.Save()
+	links.Save()
 	return &model.Link{ID: strconv.FormatInt(linkID, 10), Title: link.Title, Address: link.Address}, nil
 }
 
