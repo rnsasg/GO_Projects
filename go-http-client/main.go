@@ -13,12 +13,12 @@ import (
 )
 
 func main() {
-	getRequest()
-	postRequest()
-	sendJsonData()
-	parsingJsonData()
-	setHeaders()
-	setTimeouts()
+	// getRequest()
+	// postRequest()
+	// sendJsonData()
+	// parsingJsonData()
+	// setHeaders()
+	// setTimeouts()
 	setSingleRequestTimeout()
 }
 
@@ -48,6 +48,11 @@ func setSingleRequestTimeout() {
 	fmt.Println("Status:", resp.Status)
 }
 
+// $ Output:
+// $ go run main.go
+// 2024/05/20 07:48:18 Get "http://www.example.com": context deadline exceeded
+// exit status 1
+
 func setTimeouts() {
 	url := "http://www.example.com"
 
@@ -63,6 +68,11 @@ func setTimeouts() {
 	// print the status code
 	fmt.Println("Status:", resp.Status)
 }
+
+// $ Output:
+// $ go run main.go
+// 2024/05/20 07:47:13 Get "http://www.example.com": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+// exit status 1
 
 func setHeaders() {
 	url := "http://localhost:3000"
@@ -104,7 +114,7 @@ func parsingJsonData() {
 		log.Fatal(err)
 	}
 	defer resp.Body.Close()
-	fmt.Println("Status", resp.Status)
+	fmt.Println("Status", resp.Status, resp.Body)
 
 	responsePerson := Person{}
 	err = json.NewDecoder(resp.Body).Decode(&responsePerson)
@@ -114,6 +124,10 @@ func parsingJsonData() {
 	log.Println("Resp Data:", responsePerson)
 }
 
+// sendJsonData :
+// Sending JSON data is a common use case for POST requests. To send JSON data, we can use the http.Post method, but we need to make some changes:
+//  1. We need to set the content type header to application/json - this tells the server that the request body is a JSON string
+//  2. The request body needs to be a JSON string - we can use the JSON standard library to convert a Go struct to a JSON string
 func sendJsonData() {
 	url := "http://localhost:3000"
 	p := Person{
@@ -134,9 +148,12 @@ func sendJsonData() {
 	fmt.Println("Status", resp.Status)
 }
 
+// postRequest :
+// To make a POST request, we can use the http.Post method.
+// This method takes in the URL, the content type, and the request body as parameters.
+// The request body allows us to send data to the server, which is not possible with a GET request.
 func postRequest() {
 	url := "http://localhost:3000"
-
 	body := strings.NewReader("This is the request body")
 	resp, err := http.Post(url, "text/plain", body)
 
@@ -148,6 +165,7 @@ func postRequest() {
 	fmt.Println("Status:", resp.Status)
 }
 
+// getRequest()
 // Making a GET Request
 // For certain common request methods, like GET, and POST, the http package provides helper methods that
 // make it easier to make requests.
@@ -159,7 +177,7 @@ func getRequest() {
 		log.Fatal(err)
 	}
 	defer resp.Body.Close()
-
+	fmt.Println(resp.Status)
 	if resp.StatusCode != http.StatusOK {
 		log.Fatalf("status code error %d %s", resp.StatusCode, resp.Status)
 	}
@@ -168,4 +186,5 @@ func getRequest() {
 	if err != nil {
 		log.Println(string(data))
 	}
+	fmt.Println(string(data))
 }
