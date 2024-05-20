@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.21.12
-// source: chat/simple/proto/chat.proto
+// source: chat.proto
 
-package proto
+package chat
 
 import (
 	context "context"
@@ -35,7 +35,7 @@ func NewChatServiceClient(cc grpc.ClientConnInterface) ChatServiceClient {
 
 func (c *chatServiceClient) SayHello(ctx context.Context, in *ChatMessage, opts ...grpc.CallOption) (*ChatMessage, error) {
 	out := new(ChatMessage)
-	err := c.cc.Invoke(ctx, "/proto.ChatService/SayHello", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/chat.ChatService/SayHello", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func _ChatService_SayHello_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.ChatService/SayHello",
+		FullMethod: "/chat.ChatService/SayHello",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ChatServiceServer).SayHello(ctx, req.(*ChatMessage))
@@ -92,7 +92,7 @@ func _ChatService_SayHello_Handler(srv interface{}, ctx context.Context, dec fun
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ChatService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "proto.ChatService",
+	ServiceName: "chat.ChatService",
 	HandlerType: (*ChatServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -101,5 +101,5 @@ var ChatService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "chat/simple/proto/chat.proto",
+	Metadata: "chat.proto",
 }

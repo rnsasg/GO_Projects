@@ -18,7 +18,8 @@ psql -U postgres
 admin123
 
 \list 
-\c 
+\c postgres
+\dt 
 
-
+TRUNCATE TABLE food,pets;
 ```

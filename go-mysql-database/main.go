@@ -89,33 +89,34 @@ func main() {
 	// Executing Writes - INSERT, UPDATE, and DELETE
 
 	// sample data that we want to insert
-	// newBird := Bird{
-	// 	Species:     "rooster",
-	// 	Description: "wakes you up in the morning",
-	// }
+	newBird := Bird{
+		Species:     "Peigon",
+		Description: "Weather Air is good",
+	}
 
 	// the `Exec` method returns a `Result` type instead of a `Row`
 	// we follow the same argument pattern to add query params
 
-	// result, err := db.Exec(fmt.Sprintf("INSERT INTO birds (bird, description) VALUES (%s, %s)", newBird.Species, newBird.Description))
-	// if err != nil {
-	// 	log.Fatalf("could not insert row: %v", err)
-	// }
+	stmt, err := db.Prepare("INSERT INTO birds (bird, description) VALUES (?, ?)")
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	// rowsAffected, err := result.RowsAffected()
-	// if err != nil {
-	// 	log.Fatalf("could not get affected rows: %v", err)
-	// }
+	res, err := stmt.Exec(newBird.Species, newBird.Description)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	id, err := res.LastInsertId()
+	if err != nil {
+		log.Fatal("Error:", err.Error())
+	}
+	log.Print("Row inserted!", id)
 
 	// // we can log how many rows were inserted
 	// fmt.Println("inserted", rowsAffected, "rows")
 
 	// Connection Pooling - Timeouts and Max/Idle Connections
-
-	// db, err := sql.Open("mysql", "user:password@/database")
-	// if err != nil {
-	// 	log.Fatalf("could not connect to database: %v", err)
-	// }
 
 	// Maximum Idle Connections
 	// db.SetMaxIdleConns(5)
@@ -140,5 +141,4 @@ func main() {
 	if err != nil {
 		log.Fatalf("could not execute query: %v", err)
 	}
-
 }

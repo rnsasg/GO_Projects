@@ -1,4 +1,4 @@
-package client
+package main
 
 import (
 	"context"
@@ -7,28 +7,24 @@ import (
 	"os"
 	"time"
 
-	pb "github.com/rnsasg/GO_Projects/go-grpc/chat/simple/proto"
+	pb "github.com/rnsasg/GO_Projects/go-grpc/chat"
 	"google.golang.org/grpc"
 )
 
-func Start(port int) pb.ChatServiceClient {
-	address := fmt.Sprintf("localhost:%d", port)
+func main() {
+	address := fmt.Sprintf("localhost:%d", 50001)
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Error in startin client: %s", err.Error())
 		os.Exit(1)
 	}
 	defer conn.Close()
-	cli := pb.NewChatServiceClient(conn)
-	return cli
-}
+	c := pb.NewChatServiceClient(conn)
 
-func Greet(client pb.ChatServiceClient, message string) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	resp, err := client.SayHello(ctx, &pb.ChatMessage{Msg: message})
-
+	resp, err := c.SayHello(ctx, &pb.ChatMessage{Msg: "Hare Krishna"})
 	if err != nil {
 		log.Fatalf("Error in talking with server : %s", err.Error())
 		os.Exit(1)

@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package proto;
+package chat;
 
-option go_package = "github.com/rnsasg/GO_Projects/go-grpc/chat/simple/proto";
+option go_package = "github.com/rnsasg/GO_Projects/go-grpc/chat/chat";
 
 message ChatMessage { string msg = 1; }
 

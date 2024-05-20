@@ -13,12 +13,12 @@ import (
 )
 
 func main() {
-	// getRequest()
-	// postRequest()
-	// sendJsonData()
-	// parsingJsonData()
-	// setHeaders()
-	// setTimeouts()
+	getRequest()
+	postRequest()
+	sendJsonData()
+	parsingJsonData()
+	setHeaders()
+	setTimeouts()
 	setSingleRequestTimeout()
 }
 
