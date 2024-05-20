@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package proto;
 
-option go_package = "github.com/rnsasg/go_grpc/chat/proto";
+option go_package = "github.com/rnsasg/GO_Projects/go-grpc/chat/simple/proto";
 
 message ChatMessage { string msg = 1; }
 
