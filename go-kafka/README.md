@@ -115,3 +115,4 @@ bin/kafka-console-consumer.sh --bootstrap-server localhost:9093 --topic my-kafka
 3. [How to Install and Run a Kafka Cluster Locally](https://www.sohamkamani.com/install-and-run-kafka-locally/)
 4. [Kafka Tar File](https://archive.apache.org/dist/kafka/3.6.0/kafka_2.13-3.6.0.tgz)
 5. [Setup Kakfa Locally](https://www.sohamkamani.com/install-and-run-kafka-locally/)
+6. [Kafka Implementation in golang](https://www.sohamkamani.com/golang/working-with-kafka/)
