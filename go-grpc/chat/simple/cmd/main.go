@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 
-	"github.com/rnsasg/GO_Projects/go-grpc/chat/simple/chat/client"
-	"github.com/rnsasg/GO_Projects/go-grpc/chat/simple/chat/server"
+	"github.com/rnsasg/GO_Projects/go-grpc/simple/chat/client"
+	"github.com/rnsasg/GO_Projects/go-grpc/simple/chat/server"
 )
 
 var port = flag.Int("port", 50001, "gRPC Server Port")
