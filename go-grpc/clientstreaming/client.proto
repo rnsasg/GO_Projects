@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package clientstreaming;
+
+option go_package = "github.com/rnsasg/GO_Projects/go-grpc/clientstreaming";
+
+service PortService {
+  rpc Create(stream CreateRequest) returns (CreateResponse) {}
+}
+
+message CreateRequest {
+  string id = 1;
+  string name = 2;
+}
+
+message CreateResponse { int32 total = 1; }
