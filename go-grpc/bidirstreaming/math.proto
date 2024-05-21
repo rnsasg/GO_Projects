@@ -1,0 +1,11 @@
+syntax = "proto3";
+package bidirstreaming;
+
+option go_package = "github.com/rnsasg/GO_Projects/go-grpc/bidirstreaming";
+
+message Request { int32 num = 1; }
+message Response { int32 result = 1; }
+
+service Math {
+  rpc Max(stream Request) returns (stream Response) {}
+}

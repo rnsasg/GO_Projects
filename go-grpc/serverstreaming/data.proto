@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package serverstreaming;
+
+option go_package = "github.com/rnsasg/GO_Projects/go-grpc/serverstreaming";
+
+service StreamService {
+  rpc FetchResponse(Request) returns (stream Response) {}
+}
+
+message Request { int32 id = 1; }
+
+message Response { string result = 1; }

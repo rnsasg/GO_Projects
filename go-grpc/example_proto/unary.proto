@@ -1,0 +1,7 @@
+service MyService {
+  rpc GetResource(ResourceRequest) returns (ResourceResponse);
+}
+
+message ResourceRequest { string resource_id = 1; }
+
+message ResourceResponse { string data = 1; }

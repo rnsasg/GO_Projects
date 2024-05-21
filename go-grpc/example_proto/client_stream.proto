@@ -1,0 +1,7 @@
+service FileUploadService {
+  rpc UploadFile(stream FileRequest) returns (FileResponse);
+}
+
+message FileRequest { bytes data_chunk = 1; }
+
+message FileResponse { string status = 1; }
