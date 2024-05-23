@@ -1,0 +1,10 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: foo-bar-service
+spec:
+  type: LoadBalancer
+  selector:
+    svc: foo-bar
+  ports:
+  - port: 80

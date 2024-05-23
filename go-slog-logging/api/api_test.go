@@ -20,7 +20,7 @@ var _ = Describe("Conifg", func() {
 	var (
 		err           error
 		restAPIServer api.RestAPIServer
-		cfg           *config.Config
+		cfg           *api.RestAPIServerConfig
 	)
 
 	BeforeEach(func() {

@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"os"
 	"time"
-	"unified-observability/config"
 
 	"github.com/gorilla/mux"
 )
@@ -20,10 +19,8 @@ var (
 	ErrEmptyLogLevelEnv = errors.New("log level env is empty")
 )
 
-// RestAPICfg holds config for Rest API
-// type RestAPICfg config.RestAPIServerConfig
 // RestAPIServerConfig holds config for Rest API
-type RestAPICfg struct {
+type RestAPIServerConfig struct {
 	Port              int    `mapstructure:"port"`
 	LogLevel          string `mapstructure:"log_level"`
 	ReadHeaderTimeout time.Duration
@@ -40,7 +37,7 @@ type RestAPIServer interface {
 }
 
 // SetupDefaultLogLevel sets loglevel during service mesh collector start up
-func (rest *RestAPICfg) SetupDefaultLogLevel() {
+func (rest *RestAPIServerConfig) SetupDefaultLogLevel() {
 	var err error
 	if err = SetupLogLevelUsingEnv(); err == nil {
 		slog.Info("Successfully set log level to %s using environment variable LOGLEVEL")
@@ -108,7 +105,7 @@ func SetLogLevel(level string) error {
 }
 
 // Start starts the Rest API Server
-func (rest *RestAPICfg) Start() {
+func (rest *RestAPIServerConfig) Start() {
 
 	rest.Router.HandleFunc("/healthz", SetupReadyProbe).Methods(http.MethodGet)
 	rest.Router.HandleFunc("/logging", SetupLoggingLevel).Methods(http.MethodGet)
@@ -125,7 +122,7 @@ func (rest *RestAPICfg) Start() {
 }
 
 // Stop stop the Rest API Server
-func (rest *RestAPICfg) Stop() {
+func (rest *RestAPIServerConfig) Stop() {
 	slog.Info("MUX RestServer : Shutting down rest server")
 	shutdownCtx, shutdownRelease := context.WithTimeout(context.Background(), 10*time.Second)
 	defer shutdownRelease()
@@ -169,13 +166,13 @@ func SetupLoggingLevel(w http.ResponseWriter, r *http.Request) {
 }
 
 // NewRestAPIServer returns a new RestAPIServerConfig object
-func NewRestAPIServer(cfg *config.Config) RestAPIServer {
-	return &RestAPICfg{
-		Port: cfg.RestAPIServerConfig.Port,
+func NewRestAPIServer(cfg *RestAPIServerConfig) RestAPIServer {
+	return &RestAPIServerConfig{
+		Port: cfg.Port,
 		HTTPServer: &http.Server{
-			ReadHeaderTimeout: cfg.RestAPIServerConfig.ReadHeaderTimeout * time.Second,
+			ReadHeaderTimeout: cfg.ReadHeaderTimeout * time.Second,
 		},
-		LogLevel: cfg.RestAPIServerConfig.LogLevel,
+		LogLevel: cfg.LogLevel,
 		Router:   mux.NewRouter(),
 		StopCh:   make(chan struct{}, 1),
 	}
