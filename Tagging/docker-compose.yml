@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  cassandra:
+    image: cassandra:latest  # Use the latest Cassandra image
+    container_name: cassandra  # Name the container "cassandra"
+    ports:
+      - "9042:9042"  # Map port 9042 on the host to port 9042 on the container
+    networks:
+      - cassandra-network  # Connect this service to the 'cassandra-network' network
+
+  app:
+    image: tagging:latest  # Use the 'tagging' image with the 'latest' tag
+    container_name: tagging  # Name the container "tagging"
+    depends_on:
+      - cassandra  # Ensure 'cassandra' service starts before this service
+    environment:
+      CASSANDRA_HOST: cassandra  # Set an environment variable for the Cassandra host
+    networks:
+      - cassandra-network  # Connect this service to the 'cassandra-network' network
+
+networks:
+  cassandra-network:
+    driver: bridge  # Use the 'bridge' driver for the network
