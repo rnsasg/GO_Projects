@@ -1,0 +1,32 @@
+// 3 node Cassandra setup listening on ports 9042, 9043, and 9044 for client requests
+
+// Run the first node
+docker run --name cassandra-1 -p 9042:9042 -d cassandra
+INSTANCE1=$(docker inspect --format="{{ .NetworkSettings.IPAddress }}" cassandra-1)
+echo "INSTANCE1: ${INSTANCE1}"
+
+// Run the second node
+docker run --name cassandra-2 -p 9043:9042 -d -e CASSANDRA_SEEDS=$INSTANCE1 cassandra
+INSTANCE2=$(docker inspect --format="{{ .NetworkSettings.IPAddress }}" cassandra-2)
+echo "INSTANCE2: ${INSTANCE2}"
+
+// Run the third node
+docker run --name cassandra-3 -p 9044:9042 -d -e CASSANDRA_SEEDS=$INSTANCE1,$INSTANCE2 cassandra
+INSTANCE3=$(docker inspect --format="{{ .NetworkSettings.IPAddress }}" cassandra-3)
+echo "INSTANCE3: ${INSTANCE3}"
+
+// Check Status of Nodes
+docker exec cassandra-3 nodetool status
+
+// Start cqlsh shell
+docker exec -it cassandra-1 cqlsh
+
+// Create a keyspace with replication factor of 3 using NetworkTopologyStrategy
+CREATE KEYSPACE cassandra_gokcedb
+  WITH REPLICATION = {
+   'class' : 'NetworkTopologyStrategy',
+   'datacenter1' : 3
+  };
+
+// Show all existing keyspaces
+DESCRIBE keyspaces;

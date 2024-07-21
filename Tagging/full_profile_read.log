@@ -1,0 +1,103 @@
+******************** Stress Settings ********************
+Command:
+  Type: user
+  Count: -1
+  Duration: 1 MINUTES
+  No Warmup: false
+  Consistency Level: LOCAL_ONE
+  Target Uncertainty: not applicable
+  Command Ratios: {select_tag_by_id=1.0, select_entity_by_id=1.0, select_entities_by_tag=1.0}
+  Command Clustering Distribution: clustering=gaussian(1..10)
+  Profile File(s): ./full_profile.yaml
+Rate:
+  Auto: false
+  Thread Count: 10
+  OpsPer Sec: 0
+Population:
+  Distribution: Gaussian:  min=1,max=1000000,mean=500000.500000,stdev=166666.500000
+  Order: ARBITRARY
+  Wrap: false
+Insert:
+  Revisits: Uniform:  min=1,max=1000000
+  Visits: Fixed:  key=1
+  Row Population Ratio: Ratio: divisor=1.000000;delegate=Fixed:  key=1
+  Batch Type: not batching
+Errors:
+  Ignore: false
+  Tries: 10
+Log:
+  No Summary: false
+  No Settings: false
+  File: full_profile_read.log
+  Interval Millis: 1000
+  Level: NORMAL
+Mode:
+  API: JAVA_DRIVER_NATIVE
+  Connection Style: CQL_PREPARED
+  CQL Version: CQL3
+  Protocol Version: V5
+  Username: null
+  Password: null
+  Auth Provide Class: null
+  Max Pending Per Connection: 128
+  Connections Per Host: 8
+  Compression: NONE
+Node:
+  Nodes: [localhost]
+  Is White List: false
+  Datacenter: null
+Schema:
+  Keyspace: null
+  Replication Strategy: org.apache.cassandra.locator.SimpleStrategy
+  Replication Strategy Options: {replication_factor=1}
+  Table Compression: null
+  Table Compaction Strategy: null
+  Table Compaction Strategy Options: {}
+Transport:
+  truststore=null; truststore-password=null; keystore=null; keystore-password=null; ssl-protocol=TLS; ssl-alg=null; ssl-ciphers=TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA; 
+Port:
+  Native Port: 9042
+  JMX Port: 7199
+Send To Daemon:
+  *not set*
+Graph:
+  File: full_profile_read.html
+  Revision: unknown
+  Title: null
+  Operation: USER
+TokenRange:
+  Wrap: false
+  Split Factor: 1
+
+******************** Profile(s) ********************
+  Keyspace Name: tagging
+  Keyspace CQL: 
+***
+CREATE KEYSPACE tagging WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+***
+
+  Table Name: tag_entities
+  Table CQL: 
+***
+CREATE TABLE tag_entities (
+  tag_id uuid,
+  entity_id uuid,
+  PRIMARY KEY (tag_id, entity_id)
+);
+***
+
+  Extra Schema Definitions: null
+  Generator Configs:
+    tag_id: Clustering: Uniform:  min=0,max=100000;
+    entity_id: Clustering: Uniform:  min=0,max=100000;
+  Query Definitions:
+    select_entities_by_tag: CQL:SELECT * FROM tag_entities WHERE tag_id = ?;Fields:samerow;
+  Token Range Queries:
+  Insert Settings:
+    partitions: fixed(1)
+    select: fixed(1)/500
+    batchtype: UNLOGGED
+Generating batches with [1..1] partitions and [0..200] rows (of [0..100000] total rows in the partitions)
+
+Sleeping 2s...
+Warming up select_tag_by_id with 50000 iterations...

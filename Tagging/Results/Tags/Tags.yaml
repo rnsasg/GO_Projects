@@ -1,0 +1,46 @@
+keyspace: tagging
+
+keyspace_definition: |
+  CREATE KEYSPACE tagging WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+
+table: tags
+
+table_definition: |
+  CREATE TABLE tags (
+    id uuid PRIMARY KEY,
+    owner_id int,
+    name text,
+    description text,
+    properties text
+  );
+
+columnspec:
+  - name: id
+    cluster: uniform(0..1000000)
+
+  - name: owner_id
+    cluster: uniform(0..1000000)
+
+  - name: name
+    size: uniform(5..20)
+    population: gaussian(1..1000, 100, 3.0)
+
+  - name: description
+    size: uniform(10..100)
+    population: uniform(1..1000)
+
+  - name: properties
+    size: uniform(10..50)
+    population: uniform(1..100)
+
+insert:
+  partitions: fixed(1)
+  select: fixed(1)/500
+  batchtype: UNLOGGED
+
+queries:
+  select_tag_by_id:
+    cql: SELECT * FROM tags WHERE id = ?
+    fields: samerow
+
+

@@ -1,0 +1,136 @@
+keyspace: tagging
+
+keyspace_definition: |
+  CREATE KEYSPACE tagging WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+
+# ENTITIES TAGS
+table: tags
+
+table_definition: |
+  CREATE TABLE tags (
+    id uuid PRIMARY KEY,
+    owner_id int,
+    name text,
+    description text,
+    properties text
+  );
+
+columnspec:
+  - name: id
+    population: uuid
+
+  - name: owner_id
+    size: uniform(1..100000)
+
+  - name: name
+    size: uniform(5..20)
+    population: gaussian(1..1000, 100, 3.0)
+
+  - name: description
+    size: uniform(10..100)
+    population: uniform(1..1000)
+
+  - name: properties
+    size: uniform(10..50)
+    population: uniform(1..100)
+
+insert:
+  partitions: fixed(1)
+  select: fixed(1)/500
+  batchtype: UNLOGGED
+
+queries:
+  insert_tag:
+    cql: INSERT INTO tags (id, owner_id, name, description, properties) VALUES (?, ?, ?, ?, ?)
+    fields: samerow
+
+  delete_tag:
+    cql: DELETE FROM tags WHERE id = ?
+    fields: samerow
+
+  select_tag_by_id:
+    cql: SELECT * FROM tags WHERE id = ?
+    fields: samerow
+
+  select_all_tags:
+    cql: SELECT * FROM tags
+
+# ENTITIES TABLE
+table: entities
+
+table_definition: |
+  CREATE TABLE entities (
+    id uuid PRIMARY KEY,
+    name text,
+    type text,
+    metadata text
+  );
+
+columnspec:
+  - name: id
+    population: uuid
+
+  - name: name
+    size: uniform(5..20)
+    population: gaussian(1..1000, 100, 3.0)
+
+  - name: type
+    size: uniform(5..15)
+    population: uniform(1..100)
+
+  - name: metadata
+    size: uniform(10..50)
+    population: uniform(1..100)
+
+insert:
+  partitions: fixed(1)
+  select: fixed(1)/500
+  batchtype: UNLOGGED
+
+queries:
+  insert_entity:
+    cql: INSERT INTO entities (id, name, type, metadata) VALUES (?, ?, ?, ?)
+    fields: samerow
+
+  delete_entity:
+    cql: DELETE FROM entities WHERE id = ?
+    fields: samerow
+
+  select_entity_by_id:
+    cql: SELECT * FROM entities WHERE id = ?
+    fields: samerow
+
+  select_all_entities:
+    cql: SELECT * FROM entities
+
+# TAG ENTITIES TABLE
+table: tag_entities
+
+table_definition: |
+  CREATE TABLE tag_entities (
+    tag_id uuid,
+    entity_id uuid,
+    PRIMARY KEY (tag_id, entity_id)
+  );
+
+columnspec:
+  - name: tag_id
+    population: uuid
+
+  - name: entity_id
+    population: uuid
+
+insert:
+  partitions: fixed(1)
+  select: fixed(1)/500
+  batchtype: UNLOGGED
+
+queries:
+  insert_tag_entity:
+    cql: INSERT INTO tag_entities (tag_id, entity_id) VALUES (?, ?)
+    fields: samerow
+
+  select_entities_by_tag:
+    cql: SELECT * FROM tag_entities WHERE tag_id = ?
+    fields: samerow
+

@@ -1,0 +1,40 @@
+export KUBECONFIG=~/.kube/config
+sudo lsof -i -P -n | grep LISTEN
+kill -9 process_id
+
+cassandra-stress user profile=stress_profile.yaml ops(insert=1, read1=1) duration=10m
+cassandra-stress user profile=write_profile.yaml ops(insert=1) duration=10m
+cassandra-stress user profile=read_profile.yaml ops(read=1) duration=10m
+
+~/Downloads/apache-cassandra-4.0.13/tools/bin/cassandra-stress user profile=write_profile.yaml ops\(insert=1\) duration=10m
+describe keyspace tagging;
+
+## Hardware Spec :
+    No of CPU per pods
+    Memory
+    Disk Space , ( SSD , HDD )
+    Network
+
+    Threshold
+    Scale In / Scale Out
+
+## Cluster Configuration :
+    Number of nodes ( Cluster Size )
+    Replicaiton Factor
+    Data Distribution
+    Consistency Level
+
+## Tools ( YSCB, Cassandra-Stress , Custom Scripts )
+
+## Benchmark Parameter
+   Duration
+   Concurrency
+   Throughtput
+   Latency
+
+## Write 30% , read 70%
+## Data Size : per day
+
+
+
+

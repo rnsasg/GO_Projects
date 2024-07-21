@@ -1,0 +1,438 @@
+******************** Stress Settings ********************
+Command:
+  Type: user
+  Count: -1
+  Duration: 1 MINUTES
+  No Warmup: false
+  Consistency Level: LOCAL_ONE
+  Target Uncertainty: not applicable
+  Command Ratios: {t1.select_tag_by_id=1.0, t2.select_entity_by_id=1.0, t3.select_entities_by_tag=1.0}
+  Command Clustering Distribution: clustering=gaussian(1..10)
+  Profile File(s): t1_tags.yaml,t2_entities.yaml,t3_tag_entities.yaml
+Rate:
+  Auto: false
+  Thread Count: 10
+  OpsPer Sec: 0
+Population:
+  Distribution: Gaussian:  min=1,max=1000000,mean=500000.500000,stdev=166666.500000
+  Order: ARBITRARY
+  Wrap: false
+Insert:
+  Revisits: Uniform:  min=1,max=1000000
+  Visits: Fixed:  key=1
+  Row Population Ratio: Ratio: divisor=1.000000;delegate=Fixed:  key=1
+  Batch Type: not batching
+Errors:
+  Ignore: false
+  Tries: 10
+Log:
+  No Summary: false
+  No Settings: false
+  File: full_reads.log
+  Interval Millis: 1000
+  Level: NORMAL
+Mode:
+  API: JAVA_DRIVER_NATIVE
+  Connection Style: CQL_PREPARED
+  CQL Version: CQL3
+  Protocol Version: V5
+  Username: null
+  Password: null
+  Auth Provide Class: null
+  Max Pending Per Connection: 128
+  Connections Per Host: 8
+  Compression: NONE
+Node:
+  Nodes: [localhost]
+  Is White List: false
+  Datacenter: null
+Schema:
+  Keyspace: null
+  Replication Strategy: org.apache.cassandra.locator.SimpleStrategy
+  Replication Strategy Options: {replication_factor=1}
+  Table Compression: null
+  Table Compaction Strategy: null
+  Table Compaction Strategy Options: {}
+Transport:
+  truststore=null; truststore-password=null; keystore=null; keystore-password=null; ssl-protocol=TLS; ssl-alg=null; ssl-ciphers=TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA; 
+Port:
+  Native Port: 9042
+  JMX Port: 7199
+Send To Daemon:
+  *not set*
+Graph:
+  File: full_read_graph.html
+  Revision: unknown
+  Title: null
+  Operation: USER
+TokenRange:
+  Wrap: false
+  Split Factor: 1
+
+******************** Profile(s) ********************
+  Keyspace Name: tagging
+  Keyspace CQL: 
+***
+CREATE KEYSPACE tagging WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+***
+
+  Table Name: tags
+  Table CQL: 
+***
+CREATE TABLE tags (
+  id uuid PRIMARY KEY,
+  owner_id int,
+  name text,
+  description text,
+  properties text
+);
+***
+
+  Extra Schema Definitions: null
+  Generator Configs:
+    owner_id: Size: Gaussian:  min=5,max=10,mean=7.500000,stdev=0.833333;Identity: Uniform:  min=1,max=1000000;
+    name: Size: Uniform:  min=5,max=200;
+    description: Size: Uniform:  min=10,max=100;
+    id: Size: Gaussian:  min=5,max=10,mean=7.500000,stdev=0.833333;Identity: Uniform:  min=1,max=10000000;
+    properties: Size: Uniform:  min=10,max=50;
+  Query Definitions:
+    select_tag_by_id: CQL:SELECT * FROM tags WHERE id = ?;Fields:samerow;
+  Token Range Queries:
+  Insert Settings:
+    partitions: fixed(1)
+    select: fixed(1)/500
+    batchtype: UNLOGGED
+Generating batches with [1..1] partitions and [0..0] rows (of [1..1] total rows in the partitions)
+  Keyspace Name: tagging
+  Keyspace CQL: 
+***
+CREATE KEYSPACE tagging WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+***
+
+  Table Name: entities
+  Table CQL: 
+***
+CREATE TABLE entities (
+  id uuid PRIMARY KEY,
+  name text,
+  type text,
+  metadata text
+);
+***
+
+  Extra Schema Definitions: null
+  Generator Configs:
+    metadata: Size: Uniform:  min=10,max=50;
+    name: Size: Uniform:  min=5,max=20;Identity: Uniform:  min=1,max=1000;
+    id: Size: Gaussian:  min=5,max=10,mean=7.500000,stdev=0.833333;Identity: Uniform:  min=1,max=10000000;
+    type: Size: Uniform:  min=5,max=15;Identity: Uniform:  min=1,max=100;
+  Query Definitions:
+    select_entity_by_id: CQL:SELECT * FROM entities WHERE id = ?;Fields:samerow;
+    select_all_entities: CQL:SELECT * FROM entities;Fields:null;
+  Token Range Queries:
+  Insert Settings:
+    partitions: fixed(1)
+    select: fixed(1)/500
+    batchtype: UNLOGGED
+Generating batches with [1..1] partitions and [0..0] rows (of [1..1] total rows in the partitions)
+  Keyspace Name: tagging
+  Keyspace CQL: 
+***
+CREATE KEYSPACE tagging WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+***
+
+  Table Name: tag_entities
+  Table CQL: 
+***
+CREATE TABLE tag_entities (
+  tag_id uuid,
+  entity_id uuid,
+  PRIMARY KEY (tag_id, entity_id)
+);
+***
+
+  Extra Schema Definitions: null
+  Generator Configs:
+    tag_id: Size: Gaussian:  min=5,max=10,mean=7.500000,stdev=0.833333;Identity: Uniform:  min=1,max=10000000;
+    entity_id: Size: Gaussian:  min=5,max=10,mean=7.500000,stdev=0.833333;Identity: Uniform:  min=1,max=10000000;
+  Query Definitions:
+    select_entities_by_tag: CQL:SELECT * FROM tag_entities WHERE tag_id = ?;Fields:samerow;
+  Token Range Queries:
+  Insert Settings:
+    partitions: fixed(1)
+    select: fixed(1)/500
+    batchtype: UNLOGGED
+Generating batches with [1..1] partitions and [0..0] rows (of [1..1] total rows in the partitions)
+
+Sleeping 2s...
+Warming up t1.select_tag_by_id with 50000 iterations...
+Warming up t2.select_entity_by_id with 50000 iterations...
+Warming up t3.select_entities_by_tag with 50000 iterations...
+Running [t1.select_tag_by_id, t2.select_entity_by_id, t3.select_entities_by_tag] with 10 threads 1 minutes
+type                                               total ops,    op/s,    pk/s,   row/s,    mean,     med,     .95,     .99,    .999,     max,   time,   stderr, errors,  gc: #,  max ms,  sum ms,  sdv ms,      mb
+t1.select_tag_by_id,                                    2160,    2160,       0,       0,     1.5,     0.7,     4.7,    12.8,    50.3,    74.7,    1.0,      NaN,      0,      1,       7,       7,       0,     319
+t2.select_entity_by_id,                                 2066,    2066,       0,       0,     1.5,     0.8,     4.8,    17.6,    41.4,    45.3,    1.0,      NaN,      0,      1,       7,       7,       0,     319
+t3.select_entities_by_tag,                              2410,    2410,       0,       0,     1.5,     0.7,     5.1,    14.8,    30.8,    54.4,    1.0,      NaN,      0,      1,       7,       7,       0,     319
+total,                                                  6636,    6636,       0,       0,     1.5,     0.7,     4.8,    14.9,    43.1,    74.7,    1.0,      NaN,      0,      1,       7,       7,       0,     319
+t1.select_tag_by_id,                                    4526,    2366,       0,       0,     1.3,     0.8,     3.7,    11.7,    26.2,    44.1,    2.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                                 4650,    2584,       0,       0,     1.4,     0.8,     4.1,    11.7,    26.5,    32.0,    2.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                              4883,    2473,       0,       0,     1.4,     0.7,     4.2,    14.3,    25.9,    43.0,    2.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 14059,    7423,       0,       0,     1.3,     0.7,     4.1,    11.8,    26.2,    44.1,    2.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                    7194,    2668,       0,       0,     1.3,     0.8,     4.0,     9.9,    21.3,    31.4,    3.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                                 7280,    2630,       0,       0,     1.2,     0.8,     3.3,     9.7,    17.0,    37.4,    3.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                              7561,    2678,       0,       0,     1.3,     0.8,     3.8,    10.2,    16.0,    47.2,    3.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 22035,    7976,       0,       0,     1.2,     0.8,     3.6,     9.8,    19.0,    47.2,    3.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                   11329,    4135,       0,       0,     0.8,     0.7,     1.7,     3.1,     8.7,    12.6,    4.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                                11261,    3981,       0,       0,     0.8,     0.7,     1.7,     2.8,    11.6,    13.6,    4.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             11667,    4106,       0,       0,     0.8,     0.7,     1.7,     2.9,     8.3,    12.3,    4.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 34257,   12222,       0,       0,     0.8,     0.7,     1.7,     2.9,     9.0,    13.6,    4.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                   14458,    3129,       0,       0,     1.1,     0.6,     2.9,     9.7,    23.5,    28.2,    5.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                                14316,    3055,       0,       0,     1.1,     0.6,     3.0,     8.5,    27.4,    34.9,    5.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             14744,    3077,       0,       0,     1.1,     0.6,     3.1,     8.9,    23.7,    28.3,    5.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 43518,    9261,       0,       0,     1.1,     0.6,     3.0,     8.6,    24.7,    34.9,    5.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                   16628,    2170,       0,       0,     1.5,     0.7,     5.0,    14.3,    25.8,    44.5,    6.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                                16535,    2219,       0,       0,     1.6,     0.7,     5.8,    14.6,    28.6,    38.3,    6.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             17137,    2393,       0,       0,     1.4,     0.7,     4.4,    13.1,    29.5,    43.9,    6.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 50300,    6782,       0,       0,     1.5,     0.7,     5.1,    14.1,    29.0,    44.5,    6.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                   20826,    4198,       0,       0,     0.8,     0.6,     1.8,     3.2,     6.3,    18.0,    7.0,      NaN,      0,      1,      16,      16,       0,     320
+t2.select_entity_by_id,                                20663,    4128,       0,       0,     0.8,     0.6,     1.8,     3.8,    14.2,    21.0,    7.0,      NaN,      0,      1,      16,      16,       0,     320
+t3.select_entities_by_tag,                             21345,    4208,       0,       0,     0.8,     0.6,     1.8,     3.6,    14.5,    23.5,    7.0,      NaN,      0,      1,      16,      16,       0,     320
+total,                                                 62834,   12534,       0,       0,     0.8,     0.6,     1.8,     3.5,    14.4,    23.5,    7.0,      NaN,      0,      1,      16,      16,       0,     320
+t1.select_tag_by_id,                                   23699,    2873,       0,       0,     1.2,     0.7,     3.6,     8.1,    32.0,    33.9,    8.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                                23314,    2651,       0,       0,     1.2,     0.7,     3.9,    10.5,    31.6,    34.0,    8.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             24122,    2777,       0,       0,     1.2,     0.7,     4.2,     9.3,    24.5,    31.8,    8.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 71135,    8301,       0,       0,     1.2,     0.7,     3.9,     8.9,    29.9,    34.0,    8.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                   28117,    4418,       0,       0,     0.8,     0.6,     1.6,     2.8,     5.2,     6.8,    9.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                                27657,    4343,       0,       0,     0.8,     0.6,     1.5,     2.9,    10.7,    23.3,    9.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             28390,    4268,       0,       0,     0.8,     0.6,     1.7,     2.8,     6.6,    11.3,    9.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 84164,   13029,       0,       0,     0.8,     0.6,     1.6,     2.8,     6.5,    23.3,    9.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                   32271,    4154,       0,       0,     0.8,     0.6,     2.0,     4.2,    23.8,    30.2,   10.0,      NaN,      0,      1,      22,      22,       0,     320
+t2.select_entity_by_id,                                31507,    3850,       0,       0,     0.8,     0.6,     1.9,     4.0,    24.0,    28.3,   10.0,      NaN,      0,      1,      22,      22,       0,     320
+t3.select_entities_by_tag,                             32496,    4106,       0,       0,     0.8,     0.6,     2.0,     4.4,    11.7,    30.3,   10.0,      NaN,      0,      1,      22,      22,       0,     320
+total,                                                 96274,   12110,       0,       0,     0.8,     0.6,     1.9,     4.3,    17.3,    30.3,   10.0,      NaN,      0,      1,      22,      22,       0,     320
+t1.select_tag_by_id,                                   36240,    3969,       0,       0,     0.9,     0.6,     1.9,     5.9,    24.2,    36.9,   11.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                                35547,    4040,       0,       0,     0.8,     0.6,     1.8,     4.9,    10.9,    43.3,   11.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             36217,    3721,       0,       0,     0.8,     0.6,     1.9,     4.6,    31.5,    44.5,   11.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                108004,   11730,       0,       0,     0.8,     0.6,     1.9,     4.9,    11.3,    44.5,   11.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                   39435,    3195,       0,       0,     1.0,     0.6,     2.2,     9.7,    21.8,    30.2,   12.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                                38843,    3296,       0,       0,     1.0,     0.6,     2.2,     8.3,    28.6,    75.7,   12.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             39564,    3347,       0,       0,     1.0,     0.6,     2.4,     8.1,    18.3,    38.9,   12.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                117842,    9838,       0,       0,     1.0,     0.6,     2.3,     8.4,    25.8,    75.7,   12.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                   43131,    3696,       0,       0,     0.9,     0.7,     2.0,     4.5,    11.2,    17.5,   13.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                                42868,    4025,       0,       0,     0.9,     0.6,     2.0,     4.6,    16.0,    23.1,   13.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             43368,    3804,       0,       0,     0.8,     0.6,     1.9,     3.7,     7.8,    22.6,   13.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                129367,   11525,       0,       0,     0.9,     0.6,     2.0,     4.2,    11.2,    23.1,   13.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                   47505,    4374,       0,       0,     0.8,     0.6,     1.6,     2.9,     6.1,    11.9,   14.0,      NaN,      0,      1,       3,       3,       0,     320
+t2.select_entity_by_id,                                47291,    4423,       0,       0,     0.8,     0.6,     1.6,     3.1,     7.1,    11.8,   14.0,      NaN,      0,      1,       3,       3,       0,     320
+t3.select_entities_by_tag,                             47698,    4330,       0,       0,     0.8,     0.6,     1.6,     3.0,     9.9,    12.2,   14.0,      NaN,      0,      1,       3,       3,       0,     320
+total,                                                142494,   13127,       0,       0,     0.8,     0.6,     1.6,     3.0,     7.9,    12.2,   14.0,      NaN,      0,      1,       3,       3,       0,     320
+t1.select_tag_by_id,                                   50334,    2829,       0,       0,     1.2,     0.7,     3.8,    12.9,    33.8,    52.5,   15.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                                50229,    2938,       0,       0,     1.2,     0.6,     3.3,    11.3,    37.3,    60.0,   15.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             50278,    2580,       0,       0,     1.2,     0.6,     3.3,    11.9,    31.6,    63.0,   15.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                150841,    8347,       0,       0,     1.2,     0.7,     3.4,    11.8,    32.0,    63.0,   15.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                   53132,    2798,       0,       0,     1.3,     0.8,     3.5,     9.8,    27.7,    34.3,   16.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                                52849,    2620,       0,       0,     1.3,     0.7,     3.7,    11.3,    27.6,    34.9,   16.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             52770,    2492,       0,       0,     1.2,     0.7,     3.7,     9.1,    24.5,    29.6,   16.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                158751,    7910,       0,       0,     1.3,     0.7,     3.7,     9.8,    27.2,    34.9,   16.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                   56177,    3045,       0,       0,     1.2,     0.7,     3.6,    11.0,    20.1,    29.6,   17.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                                55716,    2867,       0,       0,     1.1,     0.7,     3.4,     9.6,    17.8,    30.0,   17.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             55817,    3047,       0,       0,     1.0,     0.6,     2.7,     8.7,    18.2,    25.6,   17.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                167710,    8959,       0,       0,     1.1,     0.7,     3.3,     9.6,    19.5,    30.0,   17.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                   58920,    2743,       0,       0,     1.2,     0.7,     3.2,     8.7,    27.7,    45.8,   18.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                                58431,    2715,       0,       0,     1.2,     0.7,     3.7,    10.0,    35.2,    68.5,   18.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             58870,    3053,       0,       0,     1.1,     0.6,     3.1,     8.9,    24.2,    57.3,   18.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                176221,    8511,       0,       0,     1.2,     0.7,     3.3,     9.3,    31.1,    68.5,   18.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                   63110,    4190,       0,       0,     0.8,     0.6,     1.6,     2.7,     9.6,    14.5,   19.0,      NaN,      0,      1,       4,       4,       0,     320
+t2.select_entity_by_id,                                62892,    4461,       0,       0,     0.8,     0.6,     1.7,     2.7,     9.3,    10.7,   19.0,      NaN,      0,      1,       4,       4,       0,     320
+t3.select_entities_by_tag,                             63432,    4562,       0,       0,     0.7,     0.6,     1.5,     2.8,     7.0,    10.1,   19.0,      NaN,      0,      1,       4,       4,       0,     320
+total,                                                189434,   13213,       0,       0,     0.8,     0.6,     1.6,     2.8,     9.3,    14.5,   19.0,      NaN,      0,      1,       4,       4,       0,     320
+t1.select_tag_by_id,                                   67059,    3949,       0,       0,     0.9,     0.7,     2.0,     4.2,     9.4,    12.0,   20.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                                66771,    3879,       0,       0,     0.9,     0.7,     1.8,     4.0,    15.3,    19.1,   20.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             67273,    3841,       0,       0,     0.8,     0.6,     1.8,     3.9,     9.2,    16.8,   20.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                201103,   11669,       0,       0,     0.9,     0.7,     1.9,     4.0,     9.6,    19.1,   20.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                   71527,    4468,       0,       0,     0.8,     0.6,     1.7,     3.1,     7.6,    13.0,   21.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                                71188,    4417,       0,       0,     0.8,     0.6,     1.7,     3.0,     7.6,    14.6,   21.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             71734,    4461,       0,       0,     0.7,     0.6,     1.6,     2.7,     5.6,    14.0,   21.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                214449,   13346,       0,       0,     0.7,     0.6,     1.7,     2.9,     7.2,    14.6,   21.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                   75401,    3874,       0,       0,     0.8,     0.6,     1.9,     4.7,    13.5,    29.1,   22.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                                75067,    3879,       0,       0,     0.8,     0.6,     1.8,     4.5,    13.3,    21.8,   22.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             75751,    4017,       0,       0,     0.9,     0.6,     2.0,     6.0,    17.4,    41.5,   22.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                226219,   11770,       0,       0,     0.8,     0.6,     1.9,     4.9,    13.6,    41.5,   22.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                   79667,    4266,       0,       0,     0.8,     0.6,     1.7,     4.3,    17.1,    21.2,   23.0,      NaN,      0,      1,       4,       4,       0,     320
+t2.select_entity_by_id,                                78637,    3570,       0,       0,     0.8,     0.6,     1.7,     4.3,    14.8,    22.5,   23.0,      NaN,      0,      1,       4,       4,       0,     320
+t3.select_entities_by_tag,                             79875,    4124,       0,       0,     0.8,     0.6,     1.8,     4.4,    13.3,    17.1,   23.0,      NaN,      0,      1,       4,       4,       0,     320
+total,                                                238179,   11960,       0,       0,     0.8,     0.6,     1.8,     4.4,    15.4,    22.5,   23.0,      NaN,      0,      1,       4,       4,       0,     320
+t1.select_tag_by_id,                                   83421,    3754,       0,       0,     0.9,     0.6,     2.1,     7.1,    26.8,    53.5,   24.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                                81924,    3287,       0,       0,     0.9,     0.6,     2.3,     6.7,    17.0,    20.3,   24.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             83680,    3805,       0,       0,     0.9,     0.6,     1.9,     5.9,    14.7,    28.6,   24.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                249025,   10846,       0,       0,     0.9,     0.6,     2.1,     6.5,    18.6,    53.5,   24.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                   87074,    3653,       0,       0,     0.9,     0.6,     2.0,     5.0,    12.3,    21.2,   25.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                                85943,    4019,       0,       0,     0.9,     0.7,     2.1,     5.1,    15.7,    20.4,   25.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             87345,    3665,       0,       0,     0.8,     0.6,     1.9,     4.4,    11.8,    20.2,   25.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                260362,   11337,       0,       0,     0.9,     0.6,     2.0,     4.7,    12.3,    21.2,   25.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                   90423,    3349,       0,       0,     1.0,     0.7,     2.6,     7.3,    17.0,    24.8,   26.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                                89014,    3071,       0,       0,     1.1,     0.6,     2.7,     9.1,    27.7,    34.6,   26.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             90707,    3362,       0,       0,     1.0,     0.6,     2.5,     8.5,    20.4,    27.6,   26.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                270144,    9782,       0,       0,     1.0,     0.6,     2.6,     8.3,    20.7,    34.6,   26.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                   94692,    4269,       0,       0,     0.8,     0.6,     1.7,     3.8,    12.3,    17.7,   27.0,      NaN,      0,      1,       3,       3,       0,     320
+t2.select_entity_by_id,                                93440,    4426,       0,       0,     0.8,     0.6,     1.6,     3.3,    10.1,    12.8,   27.0,      NaN,      0,      1,       3,       3,       0,     320
+t3.select_entities_by_tag,                             95085,    4378,       0,       0,     0.8,     0.6,     1.6,     3.6,    12.2,    24.7,   27.0,      NaN,      0,      1,       3,       3,       0,     320
+total,                                                283217,   13073,       0,       0,     0.8,     0.6,     1.6,     3.5,    12.1,    24.7,   27.0,      NaN,      0,      1,       3,       3,       0,     320
+t1.select_tag_by_id,                                   98774,    4082,       0,       0,     0.8,     0.6,     1.9,     4.6,     8.4,    19.0,   28.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                                97286,    3846,       0,       0,     0.8,     0.6,     1.8,     4.2,    12.3,    18.9,   28.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             99201,    4116,       0,       0,     0.8,     0.6,     1.7,     5.0,    15.0,    18.9,   28.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                295261,   12044,       0,       0,     0.8,     0.6,     1.8,     4.6,    12.3,    19.0,   28.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                  102946,    4172,       0,       0,     0.8,     0.6,     1.7,     3.7,     9.4,    17.8,   29.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                               101750,    4464,       0,       0,     0.8,     0.6,     1.7,     3.9,    13.0,    19.0,   29.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                            103424,    4223,       0,       0,     0.8,     0.6,     1.8,     3.6,     9.4,    16.3,   29.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                308120,   12859,       0,       0,     0.8,     0.6,     1.7,     3.8,    10.6,    19.0,   29.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                  105597,    2651,       0,       0,     1.3,     0.6,     4.4,    11.9,    36.8,    37.7,   30.0,      NaN,      0,      1,       9,       9,       0,     320
+t2.select_entity_by_id,                               104275,    2525,       0,       0,     1.3,     0.6,     4.8,    11.8,    27.3,    53.9,   30.0,      NaN,      0,      1,       9,       9,       0,     320
+t3.select_entities_by_tag,                            106138,    2714,       0,       0,     1.2,     0.6,     4.0,     9.0,    31.0,    36.0,   30.0,      NaN,      0,      1,       9,       9,       0,     320
+total,                                                316010,    7890,       0,       0,     1.3,     0.6,     4.4,    11.5,    35.7,    53.9,   30.0,      NaN,      0,      1,       9,       9,       0,     320
+t1.select_tag_by_id,                                  108817,    3220,       0,       0,     1.1,     0.7,     2.4,     9.5,    24.8,    60.8,   31.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                               107189,    2914,       0,       0,     1.2,     0.7,     3.2,     9.8,    40.8,    61.0,   31.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                            109241,    3103,       0,       0,     1.0,     0.7,     2.4,     6.6,    17.3,    58.9,   31.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                325247,    9237,       0,       0,     1.1,     0.7,     2.6,     9.1,    24.8,    61.0,   31.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                  113186,    4369,       0,       0,     0.8,     0.6,     1.6,     3.1,     8.3,     9.1,   32.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                               111580,    4391,       0,       0,     0.8,     0.6,     1.6,     3.0,     6.6,     8.8,   32.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                            113648,    4407,       0,       0,     0.8,     0.6,     1.7,     3.6,     9.3,    12.4,   32.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                338414,   13167,       0,       0,     0.8,     0.6,     1.6,     3.2,     8.3,    12.4,   32.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                  116025,    2839,       0,       0,     1.2,     0.7,     4.0,    10.1,    35.1,    35.8,   33.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                               114187,    2607,       0,       0,     1.2,     0.7,     4.1,     9.9,    22.5,    24.2,   33.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                            116479,    2831,       0,       0,     1.1,     0.7,     3.2,     9.5,    35.5,    35.8,   33.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                346691,    8277,       0,       0,     1.2,     0.7,     3.9,     9.9,    23.5,    35.8,   33.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                  120085,    4060,       0,       0,     0.9,     0.6,     2.0,     4.2,    11.8,    31.3,   34.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                               118012,    3825,       0,       0,     0.9,     0.6,     2.0,     5.0,    19.2,    27.2,   34.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                            120353,    3874,       0,       0,     0.8,     0.6,     1.9,     3.6,    14.4,    18.5,   34.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                358450,   11759,       0,       0,     0.8,     0.6,     2.0,     4.2,    15.9,    31.3,   34.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                  124236,    4151,       0,       0,     0.8,     0.6,     1.8,     4.1,    12.4,    19.5,   35.0,      NaN,      0,      1,       5,       5,       0,     320
+t2.select_entity_by_id,                               121905,    3893,       0,       0,     0.8,     0.6,     1.8,     4.2,    11.0,    17.3,   35.0,      NaN,      0,      1,       5,       5,       0,     320
+t3.select_entities_by_tag,                            124332,    3979,       0,       0,     0.8,     0.6,     1.9,     4.0,    12.0,    24.0,   35.0,      NaN,      0,      1,       5,       5,       0,     320
+total,                                                370473,   12023,       0,       0,     0.8,     0.6,     1.9,     4.1,    11.7,    24.0,   35.0,      NaN,      0,      1,       5,       5,       0,     320
+t1.select_tag_by_id,                                  128426,    4190,       0,       0,     0.8,     0.6,     1.9,     4.6,     8.4,    27.1,   36.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                               125800,    3895,       0,       0,     0.8,     0.6,     1.8,     4.3,    16.3,    29.9,   36.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                            128362,    4030,       0,       0,     0.8,     0.6,     1.8,     4.7,    14.9,    27.0,   36.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                382588,   12115,       0,       0,     0.8,     0.6,     1.9,     4.6,    13.0,    29.9,   36.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                  131513,    3087,       0,       0,     1.1,     0.6,     3.6,    10.6,    22.7,    35.8,   37.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                               128662,    2862,       0,       0,     1.2,     0.7,     4.0,    11.2,    36.0,    45.1,   37.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                            131091,    2729,       0,       0,     1.1,     0.6,     3.4,    10.2,    37.1,    49.8,   37.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                391266,    8678,       0,       0,     1.1,     0.6,     3.7,    10.5,    33.3,    49.8,   37.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                  135353,    3840,       0,       0,     0.9,     0.6,     2.1,     4.9,    12.4,    18.6,   38.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                               132563,    3901,       0,       0,     0.9,     0.6,     2.2,     5.3,    11.1,    18.0,   38.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                            134896,    3805,       0,       0,     0.8,     0.6,     1.9,     4.5,    10.0,    30.4,   38.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                402812,   11546,       0,       0,     0.9,     0.6,     2.1,     4.9,    10.9,    30.4,   38.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                  138812,    3459,       0,       0,     0.9,     0.6,     2.1,     5.2,    23.1,    31.3,   39.0,      NaN,      0,      1,       4,       4,       0,     320
+t2.select_entity_by_id,                               136080,    3517,       0,       0,     1.0,     0.6,     2.4,     6.5,    18.7,    35.1,   39.0,      NaN,      0,      1,       4,       4,       0,     320
+t3.select_entities_by_tag,                            138427,    3531,       0,       0,     0.9,     0.6,     2.4,     6.4,    28.3,    29.0,   39.0,      NaN,      0,      1,       4,       4,       0,     320
+total,                                                413319,   10507,       0,       0,     0.9,     0.6,     2.3,     6.2,    23.1,    35.1,   39.0,      NaN,      0,      1,       4,       4,       0,     320
+t1.select_tag_by_id,                                  142708,    3896,       0,       0,     0.9,     0.7,     2.1,     4.6,    10.7,    18.6,   40.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                               139951,    3871,       0,       0,     0.9,     0.6,     2.1,     4.7,    10.6,    21.7,   40.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                            142092,    3665,       0,       0,     0.8,     0.6,     2.0,     4.4,     8.1,    10.4,   40.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                424751,   11432,       0,       0,     0.9,     0.6,     2.1,     4.6,    10.4,    21.7,   40.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                  146602,    3894,       0,       0,     0.9,     0.6,     2.1,     5.9,    27.8,    47.6,   41.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                               143710,    3759,       0,       0,     0.9,     0.6,     2.1,     5.3,    28.5,    38.6,   41.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                            145533,    3441,       0,       0,     0.9,     0.6,     2.0,     5.1,    17.7,    22.5,   41.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                435845,   11094,       0,       0,     0.9,     0.6,     2.0,     5.5,    24.5,    47.6,   41.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                  149749,    3147,       0,       0,     1.1,     0.6,     2.6,    10.6,    33.2,    47.4,   42.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                               146642,    2932,       0,       0,     1.0,     0.6,     2.7,     9.0,    38.0,    39.1,   42.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                            148761,    3228,       0,       0,     1.1,     0.6,     3.0,    12.4,    27.9,    42.8,   42.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                445152,    9307,       0,       0,     1.1,     0.6,     2.7,    10.6,    30.8,    47.4,   42.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                  153675,    3926,       0,       0,     0.8,     0.6,     1.8,     3.7,    13.2,    16.0,   43.0,      NaN,      0,      1,       7,       7,       0,     320
+t2.select_entity_by_id,                               150412,    3770,       0,       0,     0.9,     0.7,     1.8,     4.8,    13.5,    14.8,   43.0,      NaN,      0,      1,       7,       7,       0,     320
+t3.select_entities_by_tag,                            152887,    4126,       0,       0,     0.8,     0.6,     1.8,     3.5,    13.7,    20.3,   43.0,      NaN,      0,      1,       7,       7,       0,     320
+total,                                                456974,   11822,       0,       0,     0.8,     0.7,     1.8,     4.0,    13.4,    20.3,   43.0,      NaN,      0,      1,       7,       7,       0,     320
+t1.select_tag_by_id,                                  158078,    4403,       0,       0,     0.8,     0.6,     1.7,     3.2,     6.3,     8.4,   44.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                               154772,    4360,       0,       0,     0.8,     0.6,     1.8,     3.3,     6.9,    19.2,   44.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                            157364,    4477,       0,       0,     0.7,     0.6,     1.6,     3.1,     7.8,    20.4,   44.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                470214,   13240,       0,       0,     0.7,     0.6,     1.7,     3.2,     6.9,    20.4,   44.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                  162134,    4056,       0,       0,     0.8,     0.6,     1.7,     3.4,     8.3,    12.7,   45.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                               158769,    3997,       0,       0,     0.8,     0.7,     1.9,     3.7,     9.7,    10.6,   45.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                            161561,    4197,       0,       0,     0.8,     0.6,     1.8,     3.4,     8.0,    23.0,   45.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                482464,   12250,       0,       0,     0.8,     0.6,     1.8,     3.5,     8.4,    23.0,   45.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                  165385,    3251,       0,       0,     1.1,     0.6,     2.5,    10.1,    33.9,    50.2,   46.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                               162003,    3234,       0,       0,     1.0,     0.7,     2.4,     8.1,    18.7,    36.0,   46.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                            164848,    3287,       0,       0,     1.0,     0.6,     2.1,     7.5,    18.5,    27.7,   46.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                492236,    9772,       0,       0,     1.0,     0.6,     2.3,     8.5,    28.4,    50.2,   46.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                  168958,    3573,       0,       0,     0.9,     0.6,     2.2,     6.1,    26.1,    31.9,   47.0,      NaN,      0,      1,       8,       8,       0,     320
+t2.select_entity_by_id,                               165609,    3606,       0,       0,     1.0,     0.6,     2.3,     7.8,    25.4,    33.0,   47.0,      NaN,      0,      1,       8,       8,       0,     320
+t3.select_entities_by_tag,                            168327,    3479,       0,       0,     0.9,     0.6,     2.1,     5.7,    26.8,    28.6,   47.0,      NaN,      0,      1,       8,       8,       0,     320
+total,                                                502894,   10658,       0,       0,     0.9,     0.6,     2.2,     6.4,    26.2,    33.0,   47.0,      NaN,      0,      1,       8,       8,       0,     320
+t1.select_tag_by_id,                                  173451,    4493,       0,       0,     0.8,     0.6,     1.8,     3.8,    10.6,    24.0,   48.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                               169606,    3997,       0,       0,     0.8,     0.6,     1.9,     4.3,     8.3,    15.0,   48.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                            172454,    4127,       0,       0,     0.7,     0.6,     1.7,     3.1,     8.0,    14.5,   48.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                515511,   12617,       0,       0,     0.8,     0.6,     1.8,     3.7,     8.4,    24.0,   48.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                  177653,    4202,       0,       0,     0.8,     0.6,     1.8,     3.7,    11.9,    19.3,   49.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                               173607,    4001,       0,       0,     0.8,     0.6,     1.8,     3.9,    11.1,    32.4,   49.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                            176746,    4292,       0,       0,     0.8,     0.6,     1.8,     4.8,    10.8,    17.1,   49.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                528006,   12495,       0,       0,     0.8,     0.6,     1.8,     3.9,    11.1,    32.4,   49.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                  181414,    3761,       0,       0,     0.9,     0.6,     2.1,     5.4,    14.2,    17.2,   50.0,      NaN,      0,      1,       6,       6,       0,     320
+t2.select_entity_by_id,                               177394,    3787,       0,       0,     0.9,     0.6,     2.0,     4.7,    13.3,    15.5,   50.0,      NaN,      0,      1,       6,       6,       0,     320
+t3.select_entities_by_tag,                            180618,    3872,       0,       0,     0.8,     0.6,     2.0,     4.6,    11.5,    13.4,   50.0,      NaN,      0,      1,       6,       6,       0,     320
+total,                                                539426,   11420,       0,       0,     0.9,     0.6,     2.0,     4.8,    13.5,    17.2,   50.0,      NaN,      0,      1,       6,       6,       0,     320
+t1.select_tag_by_id,                                  185080,    3666,       0,       0,     0.9,     0.6,     2.2,     7.0,    21.7,    33.2,   51.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                               180828,    3434,       0,       0,     1.0,     0.6,     2.2,     7.6,    20.6,    34.0,   51.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                            184318,    3700,       0,       0,     0.9,     0.6,     2.0,     5.5,    18.4,    25.9,   51.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                550226,   10800,       0,       0,     0.9,     0.6,     2.1,     6.7,    20.6,    34.0,   51.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                  188062,    2982,       0,       0,     1.1,     0.6,     3.0,    10.3,    30.4,    38.8,   52.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                               183822,    2994,       0,       0,     1.1,     0.6,     3.2,    11.4,    22.4,    37.7,   52.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                            187172,    2854,       0,       0,     1.1,     0.6,     3.2,    11.8,    38.0,    42.2,   52.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                559056,    8830,       0,       0,     1.1,     0.6,     3.1,    10.9,    26.9,    42.2,   52.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                  191194,    3132,       0,       0,     1.0,     0.7,     2.7,     7.6,    22.5,    28.3,   53.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                               186988,    3166,       0,       0,     1.0,     0.7,     2.6,     7.2,    27.9,    37.8,   53.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                            190379,    3207,       0,       0,     1.1,     0.7,     2.8,     8.0,    23.4,    37.9,   53.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                568561,    9505,       0,       0,     1.1,     0.7,     2.7,     7.5,    24.0,    37.9,   53.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                  194624,    3430,       0,       0,     1.0,     0.7,     2.2,     7.0,    17.0,    20.4,   54.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                               190638,    3650,       0,       0,     1.0,     0.7,     2.2,     6.5,    19.5,    30.2,   54.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                            193785,    3406,       0,       0,     0.9,     0.6,     1.9,     6.8,    16.1,    16.9,   54.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                579047,   10486,       0,       0,     0.9,     0.7,     2.1,     6.8,    17.0,    30.2,   54.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                  197332,    2708,       0,       0,     1.2,     0.7,     3.3,     9.9,    33.9,    44.2,   55.0,      NaN,      0,      1,       5,       5,       0,     320
+t2.select_entity_by_id,                               193598,    2960,       0,       0,     1.1,     0.7,     3.1,    10.9,    25.2,    44.1,   55.0,      NaN,      0,      1,       5,       5,       0,     320
+t3.select_entities_by_tag,                            196644,    2859,       0,       0,     1.2,     0.7,     3.4,    14.4,    22.9,    41.9,   55.0,      NaN,      0,      1,       5,       5,       0,     320
+total,                                                587574,    8527,       0,       0,     1.2,     0.7,     3.2,    11.0,    24.7,    44.2,   55.0,      NaN,      0,      1,       5,       5,       0,     320
+t1.select_tag_by_id,                                  201800,    4468,       0,       0,     0.8,     0.6,     1.6,     2.9,     8.0,    17.5,   56.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                               198174,    4576,       0,       0,     0.8,     0.6,     1.6,     3.2,     7.9,    19.5,   56.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                            200860,    4216,       0,       0,     0.7,     0.6,     1.5,     2.7,     7.7,    19.0,   56.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                600834,   13260,       0,       0,     0.7,     0.6,     1.6,     2.9,     8.0,    19.5,   56.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                  206088,    4288,       0,       0,     0.8,     0.6,     1.6,     3.1,     7.5,    19.9,   57.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                               202413,    4239,       0,       0,     0.8,     0.6,     1.6,     3.3,     8.9,    11.6,   57.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                            205210,    4350,       0,       0,     0.8,     0.6,     1.7,     3.4,    12.3,    24.8,   57.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                613711,   12877,       0,       0,     0.8,     0.6,     1.7,     3.2,     9.2,    24.8,   57.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                  210172,    4084,       0,       0,     0.8,     0.6,     1.8,     3.4,     7.4,    18.3,   58.0,      NaN,      0,      1,       4,       4,       0,     320
+t2.select_entity_by_id,                               206449,    4036,       0,       0,     0.8,     0.6,     1.8,     3.3,    10.5,    19.0,   58.0,      NaN,      0,      1,       4,       4,       0,     320
+t3.select_entities_by_tag,                            209488,    4278,       0,       0,     0.8,     0.6,     1.8,     3.9,     7.5,    15.4,   58.0,      NaN,      0,      1,       4,       4,       0,     320
+total,                                                626109,   12398,       0,       0,     0.8,     0.6,     1.8,     3.5,     7.6,    19.0,   58.0,      NaN,      0,      1,       4,       4,       0,     320
+t1.select_tag_by_id,                                  213259,    3087,       0,       0,     1.1,     0.7,     2.6,     9.1,    28.7,    34.0,   59.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                               209951,    3502,       0,       0,     1.0,     0.6,     2.3,     9.3,    22.3,    27.1,   59.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                            212680,    3192,       0,       0,     1.0,     0.6,     2.3,     7.1,    26.9,    40.2,   59.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                635890,    9781,       0,       0,     1.0,     0.6,     2.4,     8.7,    25.5,    40.2,   59.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                  216954,    3695,       0,       0,     0.9,     0.6,     2.1,     5.4,    15.1,    19.9,   60.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                               213712,    3761,       0,       0,     0.9,     0.6,     2.1,     4.9,    10.7,    14.0,   60.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                            216829,    4149,       0,       0,     0.8,     0.6,     2.1,     4.9,    11.1,    19.4,   60.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                647495,   11605,       0,       0,     0.9,     0.6,     2.1,     5.0,    12.8,    19.9,   60.0,      NaN,      0,      0,       0,       0,       0,       0
+t1.select_tag_by_id,                                  216984,    2990,       0,       0,     1.1,     0.8,     2.7,     3.0,     3.0,     3.0,   60.0,      NaN,      0,      0,       0,       0,       0,       0
+t2.select_entity_by_id,                               213761,    4883,       0,       0,     0.9,     0.6,     2.9,     3.0,     3.0,     3.0,   60.0,      NaN,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                            216856,    2691,       0,       0,     0.6,     0.4,     1.3,     1.3,     1.3,     1.3,   60.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                647601,   10564,       0,       0,     0.9,     0.6,     2.7,     3.0,     3.0,     3.0,   60.0,      NaN,      0,      0,       0,       0,       0,       0
+
+
+Results:
+Op rate                   :   10,792 op/s  [t1.select_tag_by_id: 3,616 op/s, t2.select_entity_by_id: 3,562 op/s, t3.select_entities_by_tag: 3,614 op/s]
+Partition rate            :        0 pk/s  [t1.select_tag_by_id: 0 pk/s, t2.select_entity_by_id: 0 pk/s, t3.select_entities_by_tag: 0 pk/s]
+Row rate                  :        0 row/s [t1.select_tag_by_id: 0 row/s, t2.select_entity_by_id: 0 row/s, t3.select_entities_by_tag: 0 row/s]
+Latency mean              :    0.9 ms [t1.select_tag_by_id: 0.9 ms, t2.select_entity_by_id: 0.9 ms, t3.select_entities_by_tag: 0.9 ms]
+Latency median            :    0.6 ms [t1.select_tag_by_id: 0.6 ms, t2.select_entity_by_id: 0.6 ms, t3.select_entities_by_tag: 0.6 ms]
+Latency 95th percentile   :    2.2 ms [t1.select_tag_by_id: 2.2 ms, t2.select_entity_by_id: 2.2 ms, t3.select_entities_by_tag: 2.1 ms]
+Latency 99th percentile   :    6.1 ms [t1.select_tag_by_id: 6.1 ms, t2.select_entity_by_id: 6.3 ms, t3.select_entities_by_tag: 6.0 ms]
+Latency 99.9th percentile :   19.1 ms [t1.select_tag_by_id: 19.4 ms, t2.select_entity_by_id: 19.2 ms, t3.select_entities_by_tag: 18.5 ms]
+Latency max               :   75.7 ms [t1.select_tag_by_id: 74.7 ms, t2.select_entity_by_id: 75.7 ms, t3.select_entities_by_tag: 63.0 ms]
+Total partitions          :          0 [t1.select_tag_by_id: 0, t2.select_entity_by_id: 0, t3.select_entities_by_tag: 0]
+Total errors              :          0 [t1.select_tag_by_id: 0, t2.select_entity_by_id: 0, t3.select_entities_by_tag: 0]
+Total GC count            : 15
+Total GC memory           : 4.686 GiB
+Total GC time             :    0.1 seconds
+Avg GC time               :    7.1 ms
+StdDev GC time            :    5.1 ms
+Total operation time      : 00:01:00
+
+END

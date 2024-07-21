@@ -1,0 +1,124 @@
+docker exec -it d96cc53952c3 /bin/sh
+
+
+~/Downloads/apache-cassandra-4.0.13/tools/bin/cassandra-stress user profile=t1_tags.yaml,t2_entities.yaml,t3_tag_entities.yaml duration=1m "ops(t1.insert=1,t2.insert=1,t3.insert=1)" truncate=once -graph file=full_write_graph.html -rate threads=10 -log file=full_write.log
+
+~/Downloads/apache-cassandra-4.0.13/tools/bin/cassandra-stress user profile=t1_tags.yaml,t2_entities.yaml,t3_tag_entities.yaml duration=1m "ops(t1.select_tag_by_id=1,t2.select_entity_by_id=1,t3.select_entities_by_tag=1)" truncate=once -graph file=full_read_graph.html -rate threads=10 -log file=full_reads.log
+
+
+############### Tags #########
+~/Downloads/apache-cassandra-4.0.13/tools/bin/cassandra-stress user profile=./Tags.yaml  duration=1m "ops(insert=1)" truncate=once -graph file=Tags_write.html -rate threads=10 -log file=Tags.log
+
+~/Downloads/apache-cassandra-4.0.13/tools/bin/cassandra-stress user profile=./Tags.yaml  duration=1m "ops(select_tag_by_id=1)" -graph file=Tags_read.html -rate threads=10 -log file=Tags_read.log
+
+######### Entity #########
+
+~/Downloads/apache-cassandra-4.0.13/tools/bin/cassandra-stress user profile=./entities.yaml  duration=1m "ops(insert=1)" truncate=once -graph file=entities_writ.html -rate threads=10 -log file=entities_write.log
+
+~/Downloads/apache-cassandra-4.0.13/tools/bin/cassandra-stress user profile=./entities.yaml  duration=1m "ops(select_entity_by_id=1)"  -graph file=entities_read.html -rate threads=10 -log file=entities_read.log
+
+############ Full #########
+
+~/Downloads/apache-cassandra-4.0.13/tools/bin/cassandra-stress user profile=./all_profile.yaml  duration=1m "ops(insert=1)" truncate=once -graph file=all_profile_write.html -rate threads=10 -log file=all_profile_write.log
+
+~/Downloads/apache-cassandra-4.0.13/tools/bin/cassandra-stress user profile=./all_profile.yaml  duration=1m "ops(select_entities_by_tag=1)" -graph file=all_profile_read.html -rate threads=10 -log file=all_profile_read.log
+
+
+####################################
+~/Downloads/apache-cassandra-4.0.13/tools/bin/cassandra-stress user profile=./all_profile.yaml  duration=1m "ops(insert=1)" truncate=always -graph file=all_profile_write.html -rate threads=10 -log file=all_profile_write.log
+
+~/Downloads/apache-cassandra-4.0.13/tools/bin/cassandra-stress user profile=./all_profile.yaml  duration=1m "ops(insert=1)" truncate=always -graph file=all_profile_write.html -rate threads=10 -log file=all_profile_write.log
+
+~/Downloads/apache-cassandra-4.0.13/tools/bin/cassandra-stress user profile=./all_profile.yaml  duration=1m "ops(insert=1)" truncate=always -graph file=all_profile_write.html -rate threads=10 -log file=all_profile_write.log
+
+~/Downloads/apache-cassandra-4.0.13/tools/bin/cassandra-stress user profile=./full_profile.yaml  duration=1m "ops(insert=1)" truncate=always -graph file=full_profile_write.html -rate threads=10 -log file=full_profile_write.log
+
+~/Downloads/apache-cassandra-4.0.13/tools/bin/cassandra-stress user profile=./full_profile.yaml  duration=1m "ops(select_tag_by_id=1, select_entity_by_id=1, select_entities_by_tag=1)"  -graph file=full_profile_read.html -rate threads=10 -log file=full_profile_read.log
+
+sudo ~/Downloads/apache-cassandra-4.0.13/tools/bin/cassandra-stress user profile=./only_tags.yaml  duration=1m "ops(select_tag_by_id=1)" -graph=test.html -rate thread=10
+
+describe keyspaces;
+describe tables;
+
+~/Downloads/apache-cassandra-4.0.13/tools/bin/cassandra-stress user write n=1000000  profile=./full_profile.yaml  duration=1m "ops(insert=1)" truncate=once
+~/Downloads/apache-cassandra-4.0.13/tools/bin/cassandra-stress write n=1000000  profile=./full_profile.yaml  duration=1m "ops(insert=1)" truncate=once
+~/Downloads/apache-cassandra-4.0.13/tools/bin/cassandra-stress user profile=./full_profile.yaml  duration=1m "ops(insert=1)" truncate=once
+
+cassandra-stress write duration=1m cl=LOCAL_QUORUM -schema file=path_to_your_yaml_file.yaml -rate threads=10
+cassandra-stress read duration=1m cl=LOCAL_QUORUM -schema file=path_to_your_yaml_file.yaml -rate threads=10
+
+~/Downloads/apache-cassandra-4.0.13/tools/bin/cassandra-stress write duration=1m cl=LOCAL_QUORUM -schema file=full_profile.yaml -rate threads=10
+~/Downloads/apache-cassandra-4.0.13/tools/bin/cassandra-stress read duration=1m cl=LOCAL_QUORUM -schema file=full_profile.yaml -rate threads=10
+
+cassandra-stress write n=1000000 cl=QUORUM -schema "keyspace='your_keyspace_name' table='tags' replication(strategy=SimpleStrategy, factor=1)"
+cassandra-stress read n=500000 cl=ONE -schema "keyspace='your_keyspace_name' table='tags' replication(strategy=SimpleStrategy, factor=1)"
+cassandra-stress mixed ratio(write=1, read=3) n=500000 cl=ONE -schema "keyspace='your_keyspace_name' table='tags' replication(strategy=SimpleStrategy, factor=1)"
+
+
+CREATE KEYSPACE tagging WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
+
+USE tagging;
+
+CREATE TABLE entities (
+    id UUID PRIMARY KEY,
+    name TEXT,
+    type TEXT,
+    metadata TEXT
+);
+
+use tagging;
+select * from entities;
+
+select count(*) from entities;
+truncate entities;
+
+
+truncate entities;
+drop table entities;
+drop table tags;
+drop table tag_entities;
+drop keyspace tagging;
+describe keyspace tagging;
+
+CREATE TABLE tags (
+    id UUID PRIMARY KEY,  // Index for storing tags
+    owner_id INT,  // XIQ Owner ID
+    name TEXT,  // Name of the Tag
+    description TEXT,  // Description of the Tag
+    properties TEXT  // Properties of the Tag
+);
+
+CREATE TABLE entities (
+    id UUID PRIMARY KEY,  // ID Key
+    name TEXT,  // Name of the Entity
+    type TEXT,  // Type of the Entity
+    metadata TEXT  // JSON representation of data
+);
+
+CREATE TABLE tag_entities (
+    tag_id UUID,  // Foreign key to tags.id
+    entity_id UUID,  // Foreign key to entities.id
+    PRIMARY KEY (tag_id, entity_id)
+);
+
+## Queries 
+
+INSERT INTO tags (id, owner_id, name, description, properties) 
+VALUES (uuid(), 12345, 'Sample Tag', 'This is a sample tag description', '{"key1":"value1","key2":"value2"}');
+
+DELETE FROM tags WHERE id = <tag_id>;
+
+INSERT INTO entities (id, name, type, metadata) 
+VALUES (uuid(), 'Sample Entity', 'Type A', '{"key1":"value1","key2":"value2"}');
+
+INSERT INTO entities (id, name, type, metadata) 
+VALUES (uuid(), 'Sample Entity', 'Type A', '{"key1":"value1","key2":"value2"}');
+
+DELETE FROM entities WHERE id = <entity_id>;
+
+SELECT * FROM tags WHERE id = <tag_id>;
+
+SELECT * FROM tags;
+
+~/Downloads/apache-cassandra-4.0.13/tools/bin/cassandra-stress user profile=./simple_stress_test.yaml  duration=1m "ops(insert=1,latest_event=1,events=1)" truncate=once
+~/Downloads/apache-cassandra-4.0.13/tools/bin/cassandra-stress user profile=./simple_stress_test.yaml  duration=1m "ops(insert=1)" truncate=once

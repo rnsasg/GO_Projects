@@ -1,0 +1,19 @@
+keyspace: tagging
+table: entities
+queries:
+  simple1:
+    cql: select * from entities where id = ?
+    fields: samerow
+
+operations:
+  read:
+    simple1: fixed(1)
+
+settings:
+  keyspace: tagging
+  table: entities
+  hosts: [ "127.0.0.1" ]
+  consistency: LOCAL_ONE
+  threads: 50
+  no-warmup:
+  duration: 10m

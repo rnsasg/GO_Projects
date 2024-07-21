@@ -1,0 +1,26 @@
+
+keyspace: tagging
+table: entities
+insert:
+  partitions: fixed(1)
+  batchtype: UNLOGGED
+  select: fixed(1)/10
+  row:
+    - name: id
+      uuid: auto
+    - name: name
+      size: fixed(10)
+    - name: type
+      size: fixed(10)
+    - name: metadata
+      size: fixed(100)
+
+settings:
+  keyspace: tagging
+  table: entities
+  hosts: ["127.0.0.1"]
+  consistency: LOCAL_ONE
+  threads: 50
+  no-warmup: true
+  duration: 10m
+

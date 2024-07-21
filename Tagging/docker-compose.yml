@@ -1,0 +1,26 @@
+version: '3'
+services:
+  cassandra:
+    image: cassandra:latest
+    container_name: cassandra
+    ports:
+      - "9042:9042"
+    networks:
+      - cassandra-network
+
+  tagging:
+    image: tagging:latest
+    container_name: tagging
+    ports:
+      - "8080:8080"
+    depends_on:
+      - cassandra
+    environment:
+      CASSANDRA_HOST: cassandra
+    networks:
+      - cassandra-network
+    command: ["sh", "-c", "until nc -z cassandra 9042; do echo 'Waiting for Cassandra to start...'; sleep 1; done; java -jar /path/to/tagging.jar"]
+
+networks:
+  cassandra-network:
+    driver: bridge

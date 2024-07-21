@@ -1,0 +1,51 @@
+keyspace: tagging
+
+keyspace_definition: |
+  CREATE KEYSPACE tagging WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+
+table: entities
+
+table_definition: |
+  CREATE TABLE entities (
+        id uuid,
+        name text,
+        type text,
+        metadata text,
+        PRIMARY KEY(id)
+  )
+
+columnspec:
+  - name: id
+    cluster: uniform(0..10000) # Staff members do between 20 and 500 events
+
+  - name: name
+    size: uniform(5..10) # The names of the name are between 5-10 characters
+    population: uniform(1..10) # 10 possible names to pick from
+
+  - name: type
+    size: uniform(5..8) # The names of the types are between 5-10 characters
+    population: uniform(1..8) # 8 possible types to pick from
+
+  - name: metadata
+    size: uniform(5..15) # The names of the metadata are between 5-10 characters
+    population: uniform(1..15) # 8 possible metadata to pick from
+
+
+insert:
+  # we only update a single partition in any given insert
+  partitions: fixed(1)
+  # we want to insert a single row per partition and we have between 20 and 500
+  # rows per partition
+  select: fixed(1)/500
+  batchtype: UNLOGGED             # Single partition unlogged batches are essentially noops
+
+queries:
+  events:
+    cql: select *  from entities where name = ? ALLOW FILTERING
+    fields: samerow
+  latest_event:
+    cql: select * from entities where name = ?  LIMIT 1 ALLOW FILTERING
+    fields: samerow
+
+
+
