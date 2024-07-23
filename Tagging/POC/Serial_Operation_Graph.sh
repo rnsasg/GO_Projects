@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define arrays for records and thread counts
-RECORDS=("1K")
+RECORDS=("10")
 THREADS=("1")
 
 SETS=(
@@ -42,11 +42,13 @@ do
 #            done
 
             ## This loop is for Queries
+            index=1
             for OPS in $OPERATIONS
             do
               sleep 2
               echo "!!! $TABLE_NAME Table $TOTAL_RECORD Records $OPS with $THREAD Threads"
-              /opt/cassandra/tools/bin/cassandra-stress user n=$TOTAL_RECORD profile=$PROFILE "${OPS}" -graph file="${TABLE_NAME}_${TOTAL_RECORD}_threads_${THREAD}.html" title="NVO_Cassandra_POC_${TABLE_NAME}_Table_${TOTAL_RECORD}_Records_${THREAD}_Threads" revision=$OPS -rate threads=$THREAD -log file="${TABLE_NAME}_${TOTAL_RECORD}_${OPS}_${THREAD}_threads.log"
+              /opt/cassandra/tools/bin/cassandra-stress user n=$TOTAL_RECORD profile=$PROFILE "${OPS}" -graph file="${TABLE_NAME}_${TOTAL_RECORD}_threads_${THREAD}.html" title="NVO_Cassandra_POC_${TABLE_NAME}_Table_${TOTAL_RECORD}_Records_${THREAD}_Threads" revision=$index -rate threads=$THREAD -log file="${TABLE_NAME}_${TOTAL_RECORD}_${index}_${THREAD}_threads.log"
+              ((index++))
             done
 
             sleep 5  # Adjust sleep time as necessary

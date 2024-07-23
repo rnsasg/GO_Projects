@@ -48,10 +48,10 @@ do
         for THREAD in "${THREADS[@]}"
         do
             echo "!!! $TABLE_NAME Table Load $TOTAL_RECORD Records with $THREAD Threads"
-            /opt/cassandra/tools/bin/cassandra-stress user n=$TOTAL_RECORD profile=$PROFILE "ops(${SPEC_NAME}.insert=1)" truncate=once -graph file="${TABLE_NAME}_${TOTAL_RECORD}_threads_${THREAD}.html" title="NVO_Cassandra_POC_${TABLE_NAME}_Table_${TOTAL_RECORD}_Records_${THREAD}_Threads" revision="Insert" -rate threads=$THREAD -log file="${TABLE_NAME}_${TOTAL_RECORD}_write_${THREAD}_threads.log"
+            /opt/cassandra/tools/bin/cassandra-stress user n=$TOTAL_RECORD profile=$PROFILE "ops(${SPEC_NAME}.insert=1)" truncate=once -graph file="${TABLE_NAME}_${TOTAL_RECORD}_threads_${THREAD}_MIXED.html" title="NVO_Cassandra_POC_${TABLE_NAME}_Table_${TOTAL_RECORD}_Records_${THREAD}_Threads" revision="Load" -rate threads=$THREAD -log file="${TABLE_NAME}_${TOTAL_RECORD}_write_${THREAD}_threads.log"
 
             echo "!!! $TABLE_NAME Table $TOTAL_RECORD Records $OPS with $THREAD Threads"
-            /opt/cassandra/tools/bin/cassandra-stress user n=$TOTAL_RECORD profile=$PROFILE "ops(${OPS})" -graph file="${TABLE_NAME}_${TOTAL_RECORD}_threads_${THREAD}.html" title="NVO_Cassandra_POC_${TABLE_NAME}_Table_${TOTAL_RECORD}_Records_${THREAD}_Threads" revision=$OPS -rate threads=$THREAD -log file="${TABLE_NAME}_${TOTAL_RECORD}_${OPS}_${THREAD}_threads.log"
+            /opt/cassandra/tools/bin/cassandra-stress user n=$TOTAL_RECORD profile=$PROFILE "ops(${OPS})" -graph file="${TABLE_NAME}_${TOTAL_RECORD}_threads_${THREAD}_MIXED.html" title="NVO_Cassandra_POC_${TABLE_NAME}_Table_${TOTAL_RECORD}_Records_${THREAD}_Threads" revision=${TABLE_NAME}_MIXED -rate threads=$THREAD -log file="${TABLE_NAME}_${TOTAL_RECORD}_MIXED_${THREAD}_threads.log"
 
             sleep 5  # Adjust sleep time as necessary
         done
