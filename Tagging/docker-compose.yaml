@@ -1,0 +1,35 @@
+version: '3'
+services:
+  cassandra-stress:
+    image: cassandra
+    container_name: cassandra-stress
+    ports:
+      - "9043:9042"  # Exposing Cassandra stress port
+    networks:
+      - cassandra-net
+    environment:
+      - CASSANDRA_SEEDS=cassandra  # Assuming it should connect to the main Cassandra node
+      - CASSANDRA_NODE_NAME=cassandra-stress  # Custom node name for cassandra-stress
+    volumes:
+      - /home/user/go/src/GO_Projects/Tagging/POC:/opt/cassandra/POC
+
+  cassandra:
+    image: cassandra
+    container_name: cassandra
+    ports:
+      - "9042:9042"  # Exposing Cassandra port
+    networks:
+      - cassandra-net
+    environment:
+      - CASSANDRA_SEEDS=cassandra-stress  # Using cassandra-stress as seed node
+      - CASSANDRA_NODE_NAME=cassandra  # Custom node name for main Cassandra node
+    volumes:
+      - /home/user/go/src/GO_Projects/Tagging/POC:/opt/cassandra/POC
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+networks:
+  cassandra-net:
+    driver: bridge

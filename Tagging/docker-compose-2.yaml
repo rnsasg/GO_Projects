@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  cassandra-1:
+    image: cassandra
+    container_name: cassandra-1
+    ports:
+      - "9042:9042"
+    networks:
+      - cassandra-net
+    environment:
+      - CASSANDRA_SEEDS=cassandra-1
+    volumes:
+      - /home/user/go/src/GO_Projects/Tagging/Results:/opt/cassandra/Results
+
+  cassandra-2:
+    image: cassandra
+    container_name: cassandra-2
+    ports:
+      - "9043:9042"
+    networks:
+      - cassandra-net
+    environment:
+      - CASSANDRA_SEEDS=cassandra-1
+    volumes:
+      - /home/user/go/src/GO_Projects/Tagging/Results:/opt/cassandra/Results
+
+  cassandra-3:
+    image: cassandra
+    container_name: cassandra-3
+    ports:
+      - "9044:9042"
+    networks:
+      - cassandra-net
+    environment:
+      - CASSANDRA_SEEDS=cassandra-1,cassandra-2
+    volumes:
+      - /home/user/go/src/GO_Projects/Tagging/Results:/opt/cassandra/Results
+
+networks:
+  cassandra-net:
+    driver: bridge

@@ -1,0 +1,152 @@
+******************** Stress Settings ********************
+Command:
+  Type: user
+  Count: 100,000
+  No Warmup: false
+  Consistency Level: LOCAL_ONE
+  Target Uncertainty: not applicable
+  Command Ratios: {t1.delete_tag_by_id=1.0}
+  Command Clustering Distribution: clustering=gaussian(1..10)
+  Profile File(s): t1_tags.yaml
+Rate:
+  Auto: false
+  Thread Count: 5
+  OpsPer Sec: 0
+Population:
+  Distribution: Gaussian:  min=1,max=100000,mean=50000.500000,stdev=16666.500000
+  Order: ARBITRARY
+  Wrap: false
+Insert:
+  Revisits: Uniform:  min=1,max=1000000
+  Visits: Fixed:  key=1
+  Row Population Ratio: Ratio: divisor=1.000000;delegate=Fixed:  key=1
+  Batch Type: not batching
+Errors:
+  Ignore: false
+  Tries: 10
+Log:
+  No Summary: false
+  No Settings: false
+  File: tags_100K_delete.logs
+  Interval Millis: 1000
+  Level: NORMAL
+Mode:
+  API: JAVA_DRIVER_NATIVE
+  Connection Style: CQL_PREPARED
+  CQL Version: CQL3
+  Protocol Version: V5
+  Username: null
+  Password: null
+  Auth Provide Class: null
+  Max Pending Per Connection: 128
+  Connections Per Host: 8
+  Compression: NONE
+Node:
+  Nodes: [localhost]
+  Is White List: false
+  Datacenter: null
+Schema:
+  Keyspace: null
+  Replication Strategy: org.apache.cassandra.locator.SimpleStrategy
+  Replication Strategy Options: {replication_factor=1}
+  Table Compression: null
+  Table Compaction Strategy: null
+  Table Compaction Strategy Options: {}
+Transport:
+  truststore=null; truststore-password=null; keystore=null; keystore-password=null; ssl-protocol=TLS; ssl-alg=null; ssl-ciphers=TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA; 
+Port:
+  Native Port: 9042
+  JMX Port: 7199
+Graph:
+  File: tags_100K.html
+  Revision: Delete_100K
+  Title: NVO_Cassandra_POC_TAG_Table_100K_Records
+  Operation: USER
+TokenRange:
+  Wrap: false
+  Split Factor: 1
+
+******************** Profile(s) ********************
+  Keyspace Name: tagging
+  Keyspace CQL: 
+***
+CREATE KEYSPACE IF NOT EXISTS tagging WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+***
+
+  Table Name: tags
+  Table CQL: 
+***
+CREATE TABLE IF NOT EXISTS tags (
+  id uuid PRIMARY KEY,
+  owner_id int,
+  name text,
+  description text,
+  properties text
+);
+***
+
+  Extra Schema Definitions: null
+  Generator Configs:
+    owner_id: Size: Gaussian:  min=5,max=10,mean=7.500000,stdev=0.833333;Identity: Uniform:  min=1,max=1000000;
+    name: Size: Uniform:  min=5,max=200;
+    description: Size: Uniform:  min=10,max=100;
+    id: Size: Gaussian:  min=5,max=10,mean=7.500000,stdev=0.833333;Identity: Uniform:  min=1,max=10000000;
+    properties: Size: Uniform:  min=10,max=50;
+  Query Definitions:
+    select_tag_by_id: CQL:SELECT * FROM tags WHERE id = ?;Fields:samerow;
+    update_tag_properties: CQL:UPDATE tags SET properties = ? WHERE id = ?;Fields:samerow;
+    delete_tag_by_id: CQL:DELETE FROM tags WHERE id = ?;Fields:samerow;
+  Token Range Queries:
+  Insert Settings:
+    partitions: fixed(1)
+    select: fixed(1)/500
+    batchtype: UNLOGGED
+Generating batches with [1..1] partitions and [0..0] rows (of [1..1] total rows in the partitions)
+
+Sleeping 2s...
+Warming up t1.delete_tag_by_id with 25000 iterations...
+Running [t1.delete_tag_by_id] with 5 threads for 100000 iteration
+type                                               total ops,    op/s,    pk/s,   row/s,    mean,     med,     .95,     .99,    .999,     max,   time,   stderr, errors,  gc: #,  max ms,  sum ms,  sdv ms,      mb
+total,                                                  4343,    4343,       0,       0,     1.0,     0.8,     2.2,     4.0,    10.6,    16.4,    1.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                  8992,    4649,       0,       0,     1.1,     0.8,     2.4,     5.0,    14.7,    18.1,    2.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 12969,    3977,       0,       0,     1.2,     0.9,     3.2,     6.8,    20.1,    28.4,    3.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 17905,    4936,       0,       0,     1.0,     0.7,     2.3,     4.8,    19.5,    22.1,    4.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 22412,    4507,       0,       0,     1.1,     0.7,     2.8,     7.2,    13.3,    18.6,    5.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 27767,    5355,       0,       0,     0.9,     0.7,     2.0,     4.3,    14.6,    28.6,    6.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 32984,    5217,       0,       0,     0.9,     0.7,     2.1,     4.5,    12.1,    23.7,    7.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 37829,    4845,       0,       0,     1.0,     0.7,     2.5,     5.5,    12.9,    19.8,    8.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 43478,    5649,       0,       0,     0.9,     0.6,     2.0,     4.7,    12.7,    14.9,    9.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 48609,    5131,       0,       0,     1.0,     0.7,     2.4,     5.7,    12.1,    39.9,   10.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 51852,    3243,       0,       0,     1.5,     0.6,     2.0,     4.8,   453.2,   454.8,   11.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 56890,    5038,       0,       0,     1.0,     0.7,     2.1,     5.4,    27.6,    43.1,   12.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 61459,    4569,       0,       0,     1.1,     0.8,     2.9,     5.7,    14.1,    16.7,   13.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 66773,    5314,       0,       0,     0.9,     0.7,     2.2,     5.4,    16.4,    25.0,   14.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 71807,    5034,       0,       0,     1.0,     0.7,     2.3,     5.5,    12.5,    24.4,   15.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 76874,    5067,       0,       0,     1.0,     0.7,     2.4,     6.1,    14.0,    16.6,   16.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 81922,    5048,       0,       0,     1.0,     0.6,     2.5,     8.0,    13.3,    19.0,   17.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 88089,    6167,       0,       0,     0.8,     0.6,     1.6,     2.9,    11.0,    15.1,   18.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 93977,    5888,       0,       0,     0.8,     0.7,     1.8,     3.5,    10.5,    15.5,   19.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 98195,    4218,       0,       0,     1.2,     0.8,     3.1,     6.2,    12.9,    22.2,   20.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                100000,    4849,       0,       0,     1.0,     0.8,     2.3,     4.1,    10.2,    11.9,   20.4,      NaN,      0,      0,       0,       0,       0,       0
+
+
+Results:
+Op rate                   :    4,909 op/s  [t1.delete_tag_by_id: 4,909 op/s]
+Partition rate            :        0 pk/s  [t1.delete_tag_by_id: 0 pk/s]
+Row rate                  :        0 row/s [t1.delete_tag_by_id: 0 row/s]
+Latency mean              :    1.0 ms [t1.delete_tag_by_id: 1.0 ms]
+Latency median            :    0.7 ms [t1.delete_tag_by_id: 0.7 ms]
+Latency 95th percentile   :    2.3 ms [t1.delete_tag_by_id: 2.3 ms]
+Latency 99th percentile   :    5.3 ms [t1.delete_tag_by_id: 5.3 ms]
+Latency 99.9th percentile :   13.7 ms [t1.delete_tag_by_id: 13.7 ms]
+Latency max               :  454.8 ms [t1.delete_tag_by_id: 454.8 ms]
+Total partitions          :          0 [t1.delete_tag_by_id: 0]
+Total errors              :          0 [t1.delete_tag_by_id: 0]
+Total GC count            : 0
+Total GC memory           : 0.000 KiB
+Total GC time             :    0.0 seconds
+Avg GC time               :    NaN ms
+StdDev GC time            :    0.0 ms
+Total operation time      : 00:00:20
+
+END

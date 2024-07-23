@@ -1,0 +1,42 @@
+specname : t3
+keyspace: tagging
+
+keyspace_definition: |
+  CREATE KEYSPACE tagging WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+
+# TAG ENTITIES TABLE
+table: tag_entities
+
+table_definition: |
+  CREATE TABLE tag_entities (
+    tag_id uuid,
+    entity_id uuid,
+    PRIMARY KEY (tag_id, entity_id)
+  );
+
+columnspec:
+  - name: tag_id
+    size: gaussian(5..10)
+    population: uniform(1..10M)
+
+  - name: entity_id
+    size: gaussian(5..10)
+    population: uniform(1..10M)
+
+insert:
+  partitions: fixed(1)
+  select: fixed(1)/500
+  batchtype: UNLOGGED
+
+queries:
+  select_entities_by_tag:
+    cql: SELECT * FROM tag_entities WHERE tag_id = ?
+    fields: samerow
+
+    update_tag_entity:
+      cql: UPDATE tag_entities SET entity_id = ? WHERE tag_id = ? AND entity_id = ?
+      fields: samerow
+
+    delete_tag_entity:
+      cql: DELETE FROM tag_entities WHERE tag_id = ? AND entity_id = ?
+      fields: samerow

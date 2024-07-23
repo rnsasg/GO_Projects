@@ -1,0 +1,53 @@
+specname : t2
+keyspace: tagging
+
+keyspace_definition: |
+  CREATE KEYSPACE tagging WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+
+# ENTITIES TABLE
+table: entities
+
+table_definition: |
+  CREATE TABLE entities (
+    id uuid PRIMARY KEY,
+    name text,
+    type text,
+    metadata text
+  );
+
+columnspec:
+  - name: id
+    size: gaussian(5..10)
+    population: uniform(1..10M)
+
+  - name: name
+    size: uniform(5..20)
+    population: uniform(1..1000)
+
+  - name: type
+    size: uniform(5..15)
+    population: uniform(1..100)
+
+  - name: metadata
+    size: uniform(10..50)
+
+insert:
+  partitions: fixed(1)
+  select: fixed(1)/500
+  batchtype: UNLOGGED
+
+queries:
+  select_entity_by_id:
+    cql: SELECT * FROM entities WHERE id = ?
+    fields: samerow
+
+  select_all_entities:
+    cql: SELECT * FROM entities
+
+  update_entity_name:
+    cql: UPDATE entities SET name = ? WHERE id = ?
+    fields: samerow
+
+  delete_entity_by_id:
+    cql: DELETE FROM entities WHERE id = ?
+    fields: samerow

@@ -1,0 +1,140 @@
+******************** Stress Settings ********************
+Command:
+  Type: user
+  Count: 10,000
+  No Warmup: false
+  Consistency Level: LOCAL_ONE
+  Target Uncertainty: not applicable
+  Command Ratios: {t1.select_tag_by_id=1.0}
+  Command Clustering Distribution: clustering=gaussian(1..10)
+  Profile File(s): t1_tags.yaml
+Rate:
+  Auto: false
+  Thread Count: 1
+  OpsPer Sec: 0
+Population:
+  Distribution: Gaussian:  min=1,max=10000,mean=5000.500000,stdev=1666.500000
+  Order: ARBITRARY
+  Wrap: false
+Insert:
+  Revisits: Uniform:  min=1,max=1000000
+  Visits: Fixed:  key=1
+  Row Population Ratio: Ratio: divisor=1.000000;delegate=Fixed:  key=1
+  Batch Type: not batching
+Errors:
+  Ignore: false
+  Tries: 10
+Log:
+  No Summary: false
+  No Settings: false
+  File: tags_10K_read.log
+  Interval Millis: 1000
+  Level: NORMAL
+Mode:
+  API: JAVA_DRIVER_NATIVE
+  Connection Style: CQL_PREPARED
+  CQL Version: CQL3
+  Protocol Version: V5
+  Username: null
+  Password: null
+  Auth Provide Class: null
+  Max Pending Per Connection: 128
+  Connections Per Host: 8
+  Compression: NONE
+Node:
+  Nodes: [localhost]
+  Is White List: false
+  Datacenter: null
+Schema:
+  Keyspace: null
+  Replication Strategy: org.apache.cassandra.locator.SimpleStrategy
+  Replication Strategy Options: {replication_factor=1}
+  Table Compression: null
+  Table Compaction Strategy: null
+  Table Compaction Strategy Options: {}
+Transport:
+  truststore=null; truststore-password=null; keystore=null; keystore-password=null; ssl-protocol=TLS; ssl-alg=null; ssl-ciphers=TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA; 
+Port:
+  Native Port: 9042
+  JMX Port: 7199
+Graph:
+  File: tags_10K.html
+  Revision: Read_10K
+  Title: NVO_Cassandra_POC_TAG_Table_10K_Records
+  Operation: USER
+TokenRange:
+  Wrap: false
+  Split Factor: 1
+
+******************** Profile(s) ********************
+  Keyspace Name: tagging
+  Keyspace CQL: 
+***
+CREATE KEYSPACE IF NOT EXISTS tagging WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+***
+
+  Table Name: tags
+  Table CQL: 
+***
+CREATE TABLE IF NOT EXISTS tags (
+  id uuid PRIMARY KEY,
+  owner_id int,
+  name text,
+  description text,
+  properties text
+);
+***
+
+  Extra Schema Definitions: null
+  Generator Configs:
+    owner_id: Size: Gaussian:  min=5,max=10,mean=7.500000,stdev=0.833333;Identity: Uniform:  min=1,max=1000000;
+    name: Size: Uniform:  min=5,max=200;
+    description: Size: Uniform:  min=10,max=100;
+    id: Size: Gaussian:  min=5,max=10,mean=7.500000,stdev=0.833333;Identity: Uniform:  min=1,max=10000000;
+    properties: Size: Uniform:  min=10,max=50;
+  Query Definitions:
+    select_tag_by_id: CQL:SELECT * FROM tags WHERE id = ?;Fields:samerow;
+    update_tag_properties: CQL:UPDATE tags SET properties = ? WHERE id = ?;Fields:samerow;
+    delete_tag_by_id: CQL:DELETE FROM tags WHERE id = ?;Fields:samerow;
+    insert_tag: CQL:INSERT INTO tags (id, owner_id, name, description, properties) VALUES (?, ?, ?, ?, ?);Fields:samerow;
+  Token Range Queries:
+  Insert Settings:
+    partitions: fixed(1)
+    select: fixed(1)/500
+    batchtype: UNLOGGED
+Generating batches with [1..1] partitions and [0..0] rows (of [1..1] total rows in the partitions)
+
+Sleeping 2s...
+Warming up t1.select_tag_by_id with 2500 iterations...
+Running [t1.select_tag_by_id] with 1 threads for 10000 iteration
+type                                               total ops,    op/s,    pk/s,   row/s,    mean,     med,     .95,     .99,    .999,     max,   time,   stderr, errors,  gc: #,  max ms,  sum ms,  sdv ms,      mb
+total,                                                   246,     246,     185,     185,     2.5,     1.4,     6.5,    11.3,    23.1,    23.1,    1.0,  0.00000,      0,      0,       0,       0,       0,       0
+total,                                                  1124,     878,     662,     662,     1.1,     0.7,     4.1,     6.9,    16.2,    16.2,    2.0,  0.39650,      0,      0,       0,       0,       0,       0
+total,                                                  2497,    1373,    1075,    1075,     0.7,     0.6,     1.3,     2.7,    10.5,    18.6,    3.0,  0.32749,      0,      0,       0,       0,       0,       0
+total,                                                  4051,    1554,    1175,    1175,     0.6,     0.6,     1.0,     2.1,     8.9,    10.8,    4.0,  0.25152,      0,      0,       0,       0,       0,       0
+total,                                                  5403,    1352,    1055,    1055,     0.7,     0.6,     1.4,     3.4,    11.5,    17.6,    5.0,  0.19716,      0,      0,       0,       0,       0,       0
+total,                                                  7077,    1674,    1289,    1289,     0.6,     0.5,     0.8,     2.2,     8.2,    15.3,    6.0,  0.16895,      0,      0,       0,       0,       0,       0
+total,                                                  8602,    1525,    1159,    1159,     0.6,     0.5,     1.0,     4.1,     8.9,    18.3,    7.0,  0.14374,      0,      0,       0,       0,       0,       0
+total,                                                 10000,    2026,    1530,    1530,     0.5,     0.4,     0.7,     1.4,    10.7,    11.2,    7.7,  0.13483,      0,      0,       0,       0,       0,       0
+
+
+Results:
+Op rate                   :    1,300 op/s  [t1.select_tag_by_id: 1,300 op/s]
+Partition rate            :      996 pk/s  [t1.select_tag_by_id: 996 pk/s]
+Row rate                  :      996 row/s [t1.select_tag_by_id: 996 row/s]
+Latency mean              :    0.7 ms [t1.select_tag_by_id: 0.7 ms]
+Latency median            :    0.6 ms [t1.select_tag_by_id: 0.6 ms]
+Latency 95th percentile   :    1.4 ms [t1.select_tag_by_id: 1.4 ms]
+Latency 99th percentile   :    4.7 ms [t1.select_tag_by_id: 4.7 ms]
+Latency 99.9th percentile :   11.3 ms [t1.select_tag_by_id: 11.3 ms]
+Latency max               :   23.1 ms [t1.select_tag_by_id: 23.1 ms]
+Total partitions          :      7,656 [t1.select_tag_by_id: 7,656]
+Total errors              :          0 [t1.select_tag_by_id: 0]
+Total GC count            : 0
+Total GC memory           : 0.000 KiB
+Total GC time             :    0.0 seconds
+Avg GC time               :    NaN ms
+StdDev GC time            :    0.0 ms
+Total operation time      : 00:00:07
+
+END

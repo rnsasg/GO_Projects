@@ -1,4 +1,171 @@
+## Write Data
+
+/opt/cassandra/tools/bin/cassandra-stress user n=10K profile=t1_tags.yaml "ops(t1.insert=1)" truncate=once -graph file=full_write_graph.html revision=1 -rate  threads=5 -log file=full_write.log -node cassandra
+
+/opt/cassandra/tools/bin/cassandra-stress user n=10K profile=t1_tags.yaml "ops(t1.insert=1)" truncate=once -graph file=tags_write_graph.html title="NVO Cassandra POC TAG Table Write" -rate threads=5 -log file=tags_write.log
+
+
+/opt/cassandra/tools/bin/cassandra-stress user n=10K profile=t1_tags.yaml,t2_entities.yaml,t3_tag_entities.yaml "ops(t1.insert=1,t2.insert=1,t3.insert=1)" truncate=once -graph file=full_write_graph.html title="NVO Cassandra POC" -rate  threads=5 -log file=full_write.log -node cassandra
+
+/opt/cassandra/tools/bin/cassandra-stress user n=100K profile=t1_tags.yaml,t2_entities.yaml,t3_tag_entities.yaml "ops(t1.insert=1,t2.insert=1,t3.insert=1)" truncate=once -graph file=full_write_graph.html title="NVO Cassandra POC" revision="Second"  -rate threads=5 -log file=full_write.log
+
+/opt/cassandra/tools/bin/cassandra-stress user n=1M profile=t1_tags.yaml,t2_entities.yaml,t3_tag_entities.yaml "ops(t1.insert=1,t2.insert=1,t3.insert=1)" truncate=once -graph file=full_write_graph.html title="NVO Cassandra POC" revision="third" -rate threads=5 -log file=full_write.log
+
+/opt/cassandra/tools/bin/cassandra-stress user n=1M profile=t1_tags.yaml,t2_entities.yaml,t3_tag_entities.yaml "ops(t1.insert=1,t2.insert=1,t3.insert=1)" truncate=once -graph file=full_write_graph.html title="NVO Cassandra POC" revision="four" -rate threads=5 -log file=full_write.log
+
+
+#### Read Data
+
+
+
+
+##################
+/opt/cassandra/tools/bin/cassandra-stress  write n=10 cl=ONE -node cassandra
+
+/opt/cassandra/tools/bin/cassandra-stress user n=10K profile=t1_tags.yaml,t2_entities.yaml,t3_tag_entities.yaml "ops(t1.insert=1,t2.insert=1,t3.insert=1)" truncate=once -graph file=full_write_graph.html -rate revision=1 threads=10 -log file=full_write.log
+
+docker exec -it cassandra-stress /opt/cassandra/tools/bin/cassandra-stress user profile=t1_tags.yaml,t2_entities.yaml,t3_tag_entities.yaml duration=1m "ops(t1.insert=1,t2.insert=1,t3.insert=1)" truncate=once -graph file=full_write_graph.html -rate threads=10 -log file=full_write.log
+
+docker exec -it cassandra-stress
+
+/opt/cassandra/tools/bin/cassandra-stress user profile=t1_tags.yaml,t2_entities.yaml,t3_tag_entities.yaml duration=1m "ops(t1.insert=1,t2.insert=1,t3.insert=1)" truncate=once -graph file=full_write_graph.html -rate threads=10 -log file=full_write.log
+
+/opt/cassandra/tools/bin/cassandra-stress user profile=t1_tags.yaml,t2_entities.yaml,t3_tag_entities.yaml duration=1m "ops(t1.select_tag_by_id=1,t2.select_entity_by_id=1,t3.select_entities_by_tag=1)" truncate=once -graph file=full_read_graph.html -rate threads=10 -log file=full_reads.log
+
+
+#### Cassandra Stress and Cassandra into seperate container
+version: '3'
+
+services:
+  cassandra-stress:
+    image: cassandra
+    container_name: cassandra-stress
+    ports:
+      - "9043:9042"  # Exposing Cassandra stress port
+    networks:
+      - cassandra-net
+    environment:
+      - CASSANDRA_SEEDS=cassandra  # Assuming it should connect to the main Cassandra node
+    volumes:
+      - /home/user/go/src/GO_Projects/Tagging/Results:/opt/cassandra/Results
+
+  cassandra:
+    image: cassandra
+    container_name: cassandra
+    ports:
+      - "9042:9042"  # Exposing Cassandra port
+    networks:
+      - cassandra-net
+    environment:
+      - CASSANDRA_SEEDS=cassandra-stress  # Using cassandra-stress as seed node
+    volumes:
+      - /home/user/go/src/GO_Projects/Tagging/Results:/opt/cassandra/Results
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+
+networks:
+  cassandra-net:
+    driver: bridge
+
+
+
+docker exec cassandra-1 nodetool status
+docker exec -it cassandra-1 cqlsh
+
+docker exec -it cassandra-1 /opt/cassandra/tools/bin/cassandra-stress user profile=t1_tags.yaml,t2_entities.yaml,t3_tag_entities.yaml duration=1m "ops(t1.insert=1,t2.insert=1,t3.insert=1)" truncate=once -graph file=full_write_graph.html -rate threads=10 -log file=full_write.log
+
+### Multiple Docker Container with Brige / Localhost
+
+version: '3'
+
+services:
+  cassandra-1:
+    image: cassandra
+    container_name: cassandra-1
+    ports:
+      - "9042:9042"
+    networks:
+      - cassandra-net
+    environment:
+      - CASSANDRA_SEEDS=cassandra-1
+
+  cassandra-2:
+    image: cassandra
+    container_name: cassandra-2
+    ports:
+      - "9043:9042"
+    networks:
+      - cassandra-net
+    environment:
+      - CASSANDRA_SEEDS=cassandra-1
+
+  cassandra-3:
+    image: cassandra
+    container_name: cassandra-3
+    ports:
+      - "9044:9042"
+    networks:
+      - cassandra-net
+    environment:
+      - CASSANDRA_SEEDS=cassandra-1,cassandra-2
+
+networks:
+  cassandra-net:
+    driver: bridge
+
+
+### Multiple Docker Container with port forwards
+
+
+// 3 node Cassandra setup listening on ports 9042, 9043, and 9044 for client requests
+
+// Run the first node
+docker run --name cassandra-1 -p 9042:9042 -d cassandra
+INSTANCE1=$(docker inspect --format="{{ .NetworkSettings.IPAddress }}" cassandra-1)
+echo "INSTANCE1: ${INSTANCE1}"
+
+// Run the second node
+docker run --name cassandra-2 -p 9043:9042 -d -e CASSANDRA_SEEDS=$INSTANCE1 cassandra
+INSTANCE2=$(docker inspect --format="{{ .NetworkSettings.IPAddress }}" cassandra-2)
+echo "INSTANCE2: ${INSTANCE2}"
+
+// Run the third node
+docker run --name cassandra-3 -p 9044:9042 -d -e CASSANDRA_SEEDS=$INSTANCE1,$INSTANCE2 cassandra
+INSTANCE3=$(docker inspect --format="{{ .NetworkSettings.IPAddress }}" cassandra-3)
+echo "INSTANCE3: ${INSTANCE3}"
+
+// Check Status of Nodes
+docker exec cassandra-3 nodetool status
+
+// Start cqlsh shell
+docker exec -it cassandra-1 cqlsh
+
+// Create a keyspace with replication factor of 3 using NetworkTopologyStrategy
+CREATE KEYSPACE cassandra_gokcedb
+  WITH REPLICATION = {
+   'class' : 'NetworkTopologyStrategy',
+   'datacenter1' : 3
+  };
+
+// Show all existing keyspaces
+DESCRIBE keyspaces;
+
+
+
+### Running on Single Docker Container
+
+docker run --name cassandra-1 -p 9042:9042 -d cassandra
+docker cp ./Results/ d96cc53952c3:/opt/cassandra
 docker exec -it d96cc53952c3 /bin/sh
+
+/opt/cassandra/tools/bin/cassandra-stress user profile=t1_tags.yaml,t2_entities.yaml,t3_tag_entities.yaml duration=1m "ops(t1.insert=1,t2.insert=1,t3.insert=1)" truncate=once -graph file=full_write_graph.html -rate threads=10 -log file=full_write.log
+
+/opt/cassandra/tools/bin/cassandra-stress user profile=t1_tags.yaml,t2_entities.yaml,t3_tag_entities.yaml duration=1m "ops(t1.select_tag_by_id=1,t2.select_entity_by_id=1,t3.select_entities_by_tag=1)" truncate=once -graph file=full_read_graph.html -rate threads=10 -log file=full_reads.log
+
+####
 
 
 ~/Downloads/apache-cassandra-4.0.13/tools/bin/cassandra-stress user profile=t1_tags.yaml,t2_entities.yaml,t3_tag_entities.yaml duration=1m "ops(t1.insert=1,t2.insert=1,t3.insert=1)" truncate=once -graph file=full_write_graph.html -rate threads=10 -log file=full_write.log
