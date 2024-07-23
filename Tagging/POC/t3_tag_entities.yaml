@@ -1,16 +1,13 @@
-specname : t3
+specname: t3
 keyspace: tagging
-
 keyspace_definition: |
-  CREATE KEYSPACE tagging WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
-
-# TAG ENTITIES TABLE
+  CREATE KEYSPACE IF NOT EXISTS tagging WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+# ENTITIES TAGS
 table: tag_entities
-
 table_definition: |
-  CREATE TABLE tag_entities (
-    tag_id uuid,
-    entity_id uuid,
+  CREATE TABLE IF NOT EXISTS tag_entities (
+    tag_id UUID,
+    entity_id UUID,
     PRIMARY KEY (tag_id, entity_id)
   );
 
@@ -33,10 +30,6 @@ queries:
     cql: SELECT * FROM tag_entities WHERE tag_id = ?
     fields: samerow
 
-    update_tag_entity:
-      cql: UPDATE tag_entities SET entity_id = ? WHERE tag_id = ? AND entity_id = ?
-      fields: samerow
-
-    delete_tag_entity:
-      cql: DELETE FROM tag_entities WHERE tag_id = ? AND entity_id = ?
-      fields: samerow
+  delete_tag_entity:
+    cql: DELETE FROM tag_entities WHERE tag_id = ? AND entity_id = ?
+    fields: samerow
