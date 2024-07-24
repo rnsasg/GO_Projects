@@ -1,0 +1,135 @@
+******************** Stress Settings ********************
+Command:
+  Type: user
+  Count: 10,000
+  No Warmup: false
+  Consistency Level: LOCAL_ONE
+  Target Uncertainty: not applicable
+  Command Ratios: {t2.select_entity_by_id=1.0}
+  Command Clustering Distribution: clustering=gaussian(1..10)
+  Profile File(s): t2_entities.yaml
+Rate:
+  Auto: false
+  Thread Count: 5
+  OpsPer Sec: 0
+Population:
+  Distribution: Gaussian:  min=1,max=10000,mean=5000.500000,stdev=1666.500000
+  Order: ARBITRARY
+  Wrap: false
+Insert:
+  Revisits: Uniform:  min=1,max=1000000
+  Visits: Fixed:  key=1
+  Row Population Ratio: Ratio: divisor=1.000000;delegate=Fixed:  key=1
+  Batch Type: not batching
+Errors:
+  Ignore: false
+  Tries: 10
+Log:
+  No Summary: false
+  No Settings: false
+  File: entities_10K_1_5_threads.log
+  Interval Millis: 1000
+  Level: NORMAL
+Mode:
+  API: JAVA_DRIVER_NATIVE
+  Connection Style: CQL_PREPARED
+  CQL Version: CQL3
+  Protocol Version: V5
+  Username: null
+  Password: null
+  Auth Provide Class: null
+  Max Pending Per Connection: 128
+  Connections Per Host: 8
+  Compression: NONE
+Node:
+  Nodes: [localhost]
+  Is White List: false
+  Datacenter: null
+Schema:
+  Keyspace: null
+  Replication Strategy: org.apache.cassandra.locator.SimpleStrategy
+  Replication Strategy Options: {replication_factor=1}
+  Table Compression: null
+  Table Compaction Strategy: null
+  Table Compaction Strategy Options: {}
+Transport:
+  truststore=null; truststore-password=null; keystore=null; keystore-password=null; ssl-protocol=TLS; ssl-alg=null; ssl-ciphers=TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA; 
+Port:
+  Native Port: 9042
+  JMX Port: 7199
+Graph:
+  File: entities_10K_threads_5.html
+  Revision: 1
+  Title: NVO_Cassandra_POC_entities_Table_10K_Records_5_Threads
+  Operation: USER
+TokenRange:
+  Wrap: false
+  Split Factor: 1
+
+******************** Profile(s) ********************
+  Keyspace Name: tagging
+  Keyspace CQL: 
+***
+CREATE KEYSPACE tagging WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+***
+
+  Table Name: entities
+  Table CQL: 
+***
+CREATE TABLE entities (
+  id uuid PRIMARY KEY,
+  name text,
+  type text,
+  metadata text
+);
+***
+
+  Extra Schema Definitions: null
+  Generator Configs:
+    metadata: Size: Uniform:  min=10,max=50;
+    name: Size: Uniform:  min=5,max=20;Identity: Uniform:  min=1,max=1000;
+    id: Size: Gaussian:  min=5,max=10,mean=7.500000,stdev=0.833333;Identity: Uniform:  min=1,max=10000000;
+    type: Size: Uniform:  min=5,max=15;Identity: Uniform:  min=1,max=100;
+  Query Definitions:
+    select_entity_by_id: CQL:SELECT * FROM entities WHERE id = ?;Fields:samerow;
+    select_all_entities: CQL:SELECT * FROM entities;Fields:null;
+    update_entity_name: CQL:UPDATE entities SET name = ? WHERE id = ?;Fields:samerow;
+    delete_entity_by_id: CQL:DELETE FROM entities WHERE id = ?;Fields:samerow;
+  Token Range Queries:
+  Insert Settings:
+    partitions: fixed(1)
+    select: fixed(1)/500
+    batchtype: UNLOGGED
+Generating batches with [1..1] partitions and [0..0] rows (of [1..1] total rows in the partitions)
+
+Sleeping 2s...
+Warming up t2.select_entity_by_id with 2500 iterations...
+Running [t2.select_entity_by_id] with 5 threads for 10000 iteration
+type                                               total ops,    op/s,    pk/s,   row/s,    mean,     med,     .95,     .99,    .999,     max,   time,   stderr, errors,  gc: #,  max ms,  sum ms,  sdv ms,      mb
+total,                                                   535,     535,     410,     410,     3.3,     1.6,    11.5,    32.9,    37.5,    37.5,    1.0,  0.00000,      0,      0,       0,       0,       0,       0
+total,                                                  2304,    1769,    1325,    1325,     2.8,     1.6,     9.6,    24.9,    44.1,    53.6,    2.0,  0.37720,      0,      0,       0,       0,       0,       0
+total,                                                  5082,    2778,    2165,    2165,     1.8,     1.1,     4.0,    20.1,    25.8,    29.6,    3.0,  0.31492,      0,      0,       0,       0,       0,       0
+total,                                                  7976,    2894,    2179,    2179,     1.7,     1.0,     5.0,    16.6,    26.9,    44.7,    4.0,  0.23819,      0,      0,       0,       0,       0,       0
+total,                                                 10000,    3209,    2469,    2469,     1.5,     0.9,     3.8,    18.8,    24.0,    27.2,    4.6,  0.19653,      0,      0,       0,       0,       0,       0
+
+
+Results:
+Op rate                   :    2,159 op/s  [t2.select_entity_by_id: 2,159 op/s]
+Partition rate            :    1,649 pk/s  [t2.select_entity_by_id: 1,649 pk/s]
+Row rate                  :    1,649 row/s [t2.select_entity_by_id: 1,649 row/s]
+Latency mean              :    2.0 ms [t2.select_entity_by_id: 2.0 ms]
+Latency median            :    1.1 ms [t2.select_entity_by_id: 1.1 ms]
+Latency 95th percentile   :    5.5 ms [t2.select_entity_by_id: 5.5 ms]
+Latency 99th percentile   :   20.0 ms [t2.select_entity_by_id: 20.0 ms]
+Latency 99.9th percentile :   32.8 ms [t2.select_entity_by_id: 32.8 ms]
+Latency max               :   53.6 ms [t2.select_entity_by_id: 53.6 ms]
+Total partitions          :      7,636 [t2.select_entity_by_id: 7,636]
+Total errors              :          0 [t2.select_entity_by_id: 0]
+Total GC count            : 0
+Total GC memory           : 0.000 KiB
+Total GC time             :    0.0 seconds
+Avg GC time               :    NaN ms
+StdDev GC time            :    0.0 ms
+Total operation time      : 00:00:04
+
+END

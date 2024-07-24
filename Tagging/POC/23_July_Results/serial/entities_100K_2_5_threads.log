@@ -1,0 +1,155 @@
+******************** Stress Settings ********************
+Command:
+  Type: user
+  Count: 100,000
+  No Warmup: false
+  Consistency Level: LOCAL_ONE
+  Target Uncertainty: not applicable
+  Command Ratios: {t2.update_entity_name=1.0}
+  Command Clustering Distribution: clustering=gaussian(1..10)
+  Profile File(s): t2_entities.yaml
+Rate:
+  Auto: false
+  Thread Count: 5
+  OpsPer Sec: 0
+Population:
+  Distribution: Gaussian:  min=1,max=100000,mean=50000.500000,stdev=16666.500000
+  Order: ARBITRARY
+  Wrap: false
+Insert:
+  Revisits: Uniform:  min=1,max=1000000
+  Visits: Fixed:  key=1
+  Row Population Ratio: Ratio: divisor=1.000000;delegate=Fixed:  key=1
+  Batch Type: not batching
+Errors:
+  Ignore: false
+  Tries: 10
+Log:
+  No Summary: false
+  No Settings: false
+  File: entities_100K_2_5_threads.log
+  Interval Millis: 1000
+  Level: NORMAL
+Mode:
+  API: JAVA_DRIVER_NATIVE
+  Connection Style: CQL_PREPARED
+  CQL Version: CQL3
+  Protocol Version: V5
+  Username: null
+  Password: null
+  Auth Provide Class: null
+  Max Pending Per Connection: 128
+  Connections Per Host: 8
+  Compression: NONE
+Node:
+  Nodes: [localhost]
+  Is White List: false
+  Datacenter: null
+Schema:
+  Keyspace: null
+  Replication Strategy: org.apache.cassandra.locator.SimpleStrategy
+  Replication Strategy Options: {replication_factor=1}
+  Table Compression: null
+  Table Compaction Strategy: null
+  Table Compaction Strategy Options: {}
+Transport:
+  truststore=null; truststore-password=null; keystore=null; keystore-password=null; ssl-protocol=TLS; ssl-alg=null; ssl-ciphers=TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA; 
+Port:
+  Native Port: 9042
+  JMX Port: 7199
+Graph:
+  File: entities_100K_threads_5.html
+  Revision: 2
+  Title: NVO_Cassandra_POC_entities_Table_100K_Records_5_Threads
+  Operation: USER
+TokenRange:
+  Wrap: false
+  Split Factor: 1
+
+******************** Profile(s) ********************
+  Keyspace Name: tagging
+  Keyspace CQL: 
+***
+CREATE KEYSPACE tagging WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+***
+
+  Table Name: entities
+  Table CQL: 
+***
+CREATE TABLE entities (
+  id uuid PRIMARY KEY,
+  name text,
+  type text,
+  metadata text
+);
+***
+
+  Extra Schema Definitions: null
+  Generator Configs:
+    metadata: Size: Uniform:  min=10,max=50;
+    name: Size: Uniform:  min=5,max=20;Identity: Uniform:  min=1,max=1000;
+    id: Size: Gaussian:  min=5,max=10,mean=7.500000,stdev=0.833333;Identity: Uniform:  min=1,max=10000000;
+    type: Size: Uniform:  min=5,max=15;Identity: Uniform:  min=1,max=100;
+  Query Definitions:
+    select_entity_by_id: CQL:SELECT * FROM entities WHERE id = ?;Fields:samerow;
+    select_all_entities: CQL:SELECT * FROM entities;Fields:null;
+    update_entity_name: CQL:UPDATE entities SET name = ? WHERE id = ?;Fields:samerow;
+    delete_entity_by_id: CQL:DELETE FROM entities WHERE id = ?;Fields:samerow;
+  Token Range Queries:
+  Insert Settings:
+    partitions: fixed(1)
+    select: fixed(1)/500
+    batchtype: UNLOGGED
+Generating batches with [1..1] partitions and [0..0] rows (of [1..1] total rows in the partitions)
+
+Sleeping 2s...
+Warming up t2.update_entity_name with 25000 iterations...
+Running [t2.update_entity_name] with 5 threads for 100000 iteration
+type                                               total ops,    op/s,    pk/s,   row/s,    mean,     med,     .95,     .99,    .999,     max,   time,   stderr, errors,  gc: #,  max ms,  sum ms,  sdv ms,      mb
+total,                                                   494,     494,       0,       0,     2.0,     1.2,     5.6,    11.6,    21.5,    21.5,    1.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                  3695,    3201,       0,       0,     1.5,     0.9,     4.4,    13.1,    29.2,    57.0,    2.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                  7319,    3624,       0,       0,     1.4,     0.8,     3.9,     9.2,    25.4,    27.5,    3.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 10663,    3344,       0,       0,     1.5,     0.8,     4.3,     9.9,   107.0,   125.4,    4.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 14091,    3428,       0,       0,     1.4,     0.8,     3.5,    12.7,    46.5,    94.1,    5.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 18161,    4070,       0,       0,     1.2,     0.8,     2.9,     9.5,    16.4,    18.5,    6.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 21786,    3625,       0,       0,     1.4,     0.8,     4.2,     8.2,    37.4,    44.6,    7.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 27008,    5222,       0,       0,     1.0,     0.7,     2.2,     4.7,    12.0,    25.8,    8.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 29807,    2799,       0,       0,     1.8,     1.0,     6.1,    10.3,    21.6,    22.8,    9.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 34894,    5087,       0,       0,     1.0,     0.7,     2.2,     4.5,    11.6,    20.5,   10.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 38941,    4047,       0,       0,     1.2,     0.8,     3.0,     8.7,    62.8,    74.7,   11.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 43710,    4769,       0,       0,     1.0,     0.7,     2.6,     7.2,    17.7,    23.3,   12.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 47331,    3621,       0,       0,     1.4,     0.8,     4.2,     8.9,    17.7,    20.1,   13.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 51870,    4539,       0,       0,     1.1,     0.7,     2.8,     7.1,    17.4,    20.1,   14.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 57404,    5534,       0,       0,     0.9,     0.7,     2.1,     4.1,    11.4,    32.2,   15.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 61762,    4358,       0,       0,     1.1,     0.7,     3.4,     7.1,    11.9,    14.3,   16.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 66445,    4683,       0,       0,     1.1,     0.7,     2.7,     6.5,    13.4,    14.5,   17.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 71531,    5086,       0,       0,     1.0,     0.7,     2.3,     5.5,    11.7,    18.0,   18.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 75625,    4094,       0,       0,     1.2,     0.8,     3.3,     8.6,    25.8,    27.8,   19.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 78456,    2831,       0,       0,     1.8,     1.1,     5.4,     9.6,    28.8,    54.7,   20.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 81270,    2814,       0,       0,     1.8,     0.9,     5.7,    12.0,    23.4,    24.7,   21.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 86028,    4758,       0,       0,     1.0,     0.7,     2.4,     6.3,    17.2,    28.8,   22.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 90702,    4674,       0,       0,     1.1,     0.7,     2.6,     7.2,    17.3,    19.9,   23.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 94885,    4183,       0,       0,     1.2,     0.8,     3.3,     7.0,    13.0,    15.3,   24.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                100000,    5479,       0,       0,     0.9,     0.6,     2.1,     4.6,    15.6,    22.5,   24.9,      NaN,      0,      0,       0,       0,       0,       0
+
+
+Results:
+Op rate                   :    4,011 op/s  [t2.update_entity_name: 4,011 op/s]
+Partition rate            :        0 pk/s  [t2.update_entity_name: 0 pk/s]
+Row rate                  :        0 row/s [t2.update_entity_name: 0 row/s]
+Latency mean              :    1.2 ms [t2.update_entity_name: 1.2 ms]
+Latency median            :    0.8 ms [t2.update_entity_name: 0.8 ms]
+Latency 95th percentile   :    3.3 ms [t2.update_entity_name: 3.3 ms]
+Latency 99th percentile   :    8.1 ms [t2.update_entity_name: 8.1 ms]
+Latency 99.9th percentile :   19.8 ms [t2.update_entity_name: 19.8 ms]
+Latency max               :  125.4 ms [t2.update_entity_name: 125.4 ms]
+Total partitions          :          0 [t2.update_entity_name: 0]
+Total errors              :          0 [t2.update_entity_name: 0]
+Total GC count            : 0
+Total GC memory           : 0.000 KiB
+Total GC time             :    0.0 seconds
+Avg GC time               :    NaN ms
+StdDev GC time            :    0.0 ms
+Total operation time      : 00:00:24
+
+END

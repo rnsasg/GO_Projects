@@ -1,0 +1,183 @@
+******************** Stress Settings ********************
+Command:
+  Type: user
+  Count: 100,000
+  No Warmup: false
+  Consistency Level: LOCAL_ONE
+  Target Uncertainty: not applicable
+  Command Ratios: {t3.select_entities_by_tag=1.0, t3.delete_tag_entity=1.0}
+  Command Clustering Distribution: clustering=gaussian(1..10)
+  Profile File(s): t3_tag_entities.yaml
+Rate:
+  Auto: false
+  Thread Count: 5
+  OpsPer Sec: 0
+Population:
+  Distribution: Gaussian:  min=1,max=100000,mean=50000.500000,stdev=16666.500000
+  Order: ARBITRARY
+  Wrap: false
+Insert:
+  Revisits: Uniform:  min=1,max=1000000
+  Visits: Fixed:  key=1
+  Row Population Ratio: Ratio: divisor=1.000000;delegate=Fixed:  key=1
+  Batch Type: not batching
+Errors:
+  Ignore: false
+  Tries: 10
+Log:
+  No Summary: false
+  No Settings: false
+  File: tag_entities_100K_MIXED_5_threads.log
+  Interval Millis: 1000
+  Level: NORMAL
+Mode:
+  API: JAVA_DRIVER_NATIVE
+  Connection Style: CQL_PREPARED
+  CQL Version: CQL3
+  Protocol Version: V5
+  Username: null
+  Password: null
+  Auth Provide Class: null
+  Max Pending Per Connection: 128
+  Connections Per Host: 8
+  Compression: NONE
+Node:
+  Nodes: [localhost]
+  Is White List: false
+  Datacenter: null
+Schema:
+  Keyspace: null
+  Replication Strategy: org.apache.cassandra.locator.SimpleStrategy
+  Replication Strategy Options: {replication_factor=1}
+  Table Compression: null
+  Table Compaction Strategy: null
+  Table Compaction Strategy Options: {}
+Transport:
+  truststore=null; truststore-password=null; keystore=null; keystore-password=null; ssl-protocol=TLS; ssl-alg=null; ssl-ciphers=TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA; 
+Port:
+  Native Port: 9042
+  JMX Port: 7199
+Graph:
+  File: tag_entities_100K_threads_5_MIXED.html
+  Revision: tag_entities_MIXED
+  Title: NVO_Cassandra_POC_tag_entities_Table_100K_Records_5_Threads
+  Operation: USER
+TokenRange:
+  Wrap: false
+  Split Factor: 1
+
+******************** Profile(s) ********************
+  Keyspace Name: tagging
+  Keyspace CQL: 
+***
+CREATE KEYSPACE IF NOT EXISTS tagging WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+***
+
+  Table Name: tag_entities
+  Table CQL: 
+***
+CREATE TABLE IF NOT EXISTS tag_entities (
+  tag_id UUID,
+  entity_id UUID,
+  PRIMARY KEY (tag_id, entity_id)
+);
+***
+
+  Extra Schema Definitions: null
+  Generator Configs:
+    tag_id: Size: Gaussian:  min=5,max=10,mean=7.500000,stdev=0.833333;Identity: Uniform:  min=1,max=10000000;
+    entity_id: Size: Gaussian:  min=5,max=10,mean=7.500000,stdev=0.833333;Identity: Uniform:  min=1,max=10000000;
+  Query Definitions:
+    select_entities_by_tag: CQL:SELECT * FROM tag_entities WHERE tag_id = ?;Fields:samerow;
+    delete_tag_entity: CQL:DELETE FROM tag_entities WHERE tag_id = ? AND entity_id = ?;Fields:samerow;
+  Token Range Queries:
+  Insert Settings:
+    partitions: fixed(1)
+    select: fixed(1)/500
+    batchtype: UNLOGGED
+Generating batches with [1..1] partitions and [0..0] rows (of [1..1] total rows in the partitions)
+
+Sleeping 2s...
+Warming up t3.select_entities_by_tag with 25000 iterations...
+Warming up t3.delete_tag_entity with 25000 iterations...
+Running [t3.select_entities_by_tag, t3.delete_tag_entity] with 5 threads for 100000 iteration
+type                                               total ops,    op/s,    pk/s,   row/s,    mean,     med,     .95,     .99,    .999,     max,   time,   stderr, errors,  gc: #,  max ms,  sum ms,  sdv ms,      mb
+t3.delete_tag_entity,                                   1134,    1134,       0,       0,     1.4,     0.8,     4.0,     8.9,    13.7,    15.8,    1.0,  0.00000,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                              1092,    1092,     521,     521,     1.4,     0.9,     4.9,    10.6,    13.1,    18.9,    1.0,  0.00000,      0,      0,       0,       0,       0,       0
+total,                                                  2226,    2226,     521,     521,     1.4,     0.8,     4.4,     9.5,    13.7,    18.9,    1.0,  0.00000,      0,      0,       0,       0,       0,       0
+t3.delete_tag_entity,                                   3894,    2760,       0,       0,     0.9,     0.7,     1.9,     3.1,     7.8,    28.9,    2.0,  0.31842,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                              3914,    2822,    1359,    1359,     0.9,     0.7,     1.8,     3.0,     7.1,    30.1,    2.0,  0.31842,      0,      0,       0,       0,       0,       0
+total,                                                  7808,    5582,    1359,    1359,     0.9,     0.7,     1.8,     3.1,     7.3,    30.1,    2.0,  0.31842,      0,      0,       0,       0,       0,       0
+t3.delete_tag_entity,                                   6557,    2663,       0,       0,     0.9,     0.7,     2.0,     3.9,    19.4,    19.9,    3.0,  0.20659,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                              6720,    2806,    1224,    1224,     0.9,     0.7,     2.0,     3.5,     9.6,    20.3,    3.0,  0.20659,      0,      0,       0,       0,       0,       0
+total,                                                 13277,    5469,    1224,    1224,     0.9,     0.7,     2.0,     3.6,    11.8,    20.3,    3.0,  0.20659,      0,      0,       0,       0,       0,       0
+t3.delete_tag_entity,                                   9094,    2537,       0,       0,     1.0,     0.7,     2.6,     5.2,    14.0,    15.0,    4.0,  0.15571,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                              9086,    2366,    1022,    1022,     1.0,     0.7,     2.6,     5.4,    11.3,    18.3,    4.0,  0.15571,      0,      0,       0,       0,       0,       0
+total,                                                 18180,    4903,    1022,    1022,     1.0,     0.7,     2.6,     5.3,    13.9,    18.3,    4.0,  0.15571,      0,      0,       0,       0,       0,       0
+t3.delete_tag_entity,                                  12247,    3153,       0,       0,     0.8,     0.6,     1.7,     3.1,     8.5,    23.4,    5.0,  0.12398,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             12126,    3040,    1204,    1204,     0.8,     0.6,     1.7,     3.1,     8.4,    18.2,    5.0,  0.12398,      0,      0,       0,       0,       0,       0
+total,                                                 24373,    6193,    1204,    1204,     0.8,     0.6,     1.7,     3.1,     8.5,    23.4,    5.0,  0.12398,      0,      0,       0,       0,       0,       0
+t3.delete_tag_entity,                                  14663,    2416,       0,       0,     1.0,     0.7,     2.4,     5.5,    12.9,    16.5,    6.0,  0.11017,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             14453,    2327,     875,     875,     1.1,     0.8,     2.5,     5.8,    14.0,    22.4,    6.0,  0.11017,      0,      0,       0,       0,       0,       0
+total,                                                 29116,    4743,     875,     875,     1.0,     0.7,     2.4,     5.8,    13.3,    22.4,    6.0,  0.11017,      0,      0,       0,       0,       0,       0
+t3.delete_tag_entity,                                  17624,    2961,       0,       0,     0.9,     0.7,     1.8,     3.0,     5.9,     9.2,    7.0,  0.09459,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             17186,    2733,    1037,    1037,     0.9,     0.7,     1.8,     2.9,     4.9,     5.5,    7.0,  0.09459,      0,      0,       0,       0,       0,       0
+total,                                                 34810,    5694,    1037,    1037,     0.9,     0.7,     1.8,     2.9,     5.3,     9.2,    7.0,  0.09459,      0,      0,       0,       0,       0,       0
+t3.delete_tag_entity,                                  20377,    2753,       0,       0,     0.9,     0.7,     1.9,     3.5,    11.7,    21.0,    8.0,  0.08425,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             19935,    2749,     947,     947,     0.9,     0.7,     2.0,     4.2,    11.1,    17.4,    8.0,  0.08425,      0,      0,       0,       0,       0,       0
+total,                                                 40312,    5502,     947,     947,     0.9,     0.7,     2.0,     4.0,    11.1,    21.0,    8.0,  0.08425,      0,      0,       0,       0,       0,       0
+t3.delete_tag_entity,                                  23331,    2954,       0,       0,     0.8,     0.6,     1.8,     3.2,     9.3,    13.3,    9.0,  0.07476,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             22958,    3023,    1048,    1048,     0.8,     0.7,     1.9,     3.5,    13.4,    15.4,    9.0,  0.07476,      0,      0,       0,       0,       0,       0
+total,                                                 46289,    5977,    1048,    1048,     0.8,     0.6,     1.9,     3.3,    13.2,    15.4,    9.0,  0.07476,      0,      0,       0,       0,       0,       0
+t3.delete_tag_entity,                                  26205,    2874,       0,       0,     0.9,     0.6,     1.9,     3.4,    25.4,    27.1,   10.0,  0.06996,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             25781,    2823,     861,     861,     0.9,     0.7,     1.9,     3.2,    13.2,    26.2,   10.0,  0.06996,      0,      0,       0,       0,       0,       0
+total,                                                 51986,    5697,     861,     861,     0.9,     0.7,     1.9,     3.3,    13.2,    27.1,   10.0,  0.06996,      0,      0,       0,       0,       0,       0
+t3.delete_tag_entity,                                  28807,    2602,       0,       0,     0.9,     0.7,     2.1,     3.7,    11.1,    31.1,   11.0,  0.06713,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             28465,    2684,     800,     800,     1.0,     0.7,     2.3,     5.3,    14.2,    29.6,   11.0,  0.06713,      0,      0,       0,       0,       0,       0
+total,                                                 57272,    5286,     800,     800,     0.9,     0.7,     2.2,     4.7,    13.6,    31.1,   11.0,  0.06713,      0,      0,       0,       0,       0,       0
+t3.delete_tag_entity,                                  31879,    3072,       0,       0,     0.8,     0.7,     1.6,     2.5,     5.9,     6.3,   12.0,  0.06394,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             31443,    2978,     832,     832,     0.8,     0.7,     1.7,     3.1,     6.4,     8.7,   12.0,  0.06394,      0,      0,       0,       0,       0,       0
+total,                                                 63322,    6050,     832,     832,     0.8,     0.7,     1.7,     2.8,     5.9,     8.7,   12.0,  0.06394,      0,      0,       0,       0,       0,       0
+t3.delete_tag_entity,                                  34755,    2876,       0,       0,     0.8,     0.7,     1.8,     3.5,     9.7,    14.8,   13.0,  0.06347,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             34113,    2670,     719,     719,     0.9,     0.7,     2.1,     4.1,     9.8,    20.5,   13.0,  0.06347,      0,      0,       0,       0,       0,       0
+total,                                                 68868,    5546,     719,     719,     0.9,     0.7,     2.0,     3.9,     9.7,    20.5,   13.0,  0.06347,      0,      0,       0,       0,       0,       0
+t3.delete_tag_entity,                                  37624,    2869,       0,       0,     0.9,     0.7,     2.1,     4.0,    13.0,    18.7,   14.0,  0.06600,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             36526,    2413,     603,     603,     1.0,     0.7,     2.2,     4.1,    13.2,    16.7,   14.0,  0.06600,      0,      0,       0,       0,       0,       0
+total,                                                 74150,    5282,     603,     603,     0.9,     0.7,     2.1,     4.0,    13.0,    18.7,   14.0,  0.06600,      0,      0,       0,       0,       0,       0
+t3.delete_tag_entity,                                  40030,    2406,       0,       0,     1.0,     0.7,     2.1,     4.0,    15.0,    23.3,   15.0,  0.06540,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             39050,    2524,     669,     669,     1.0,     0.8,     2.2,     5.0,    12.1,    24.5,   15.0,  0.06540,      0,      0,       0,       0,       0,       0
+total,                                                 79080,    4930,     669,     669,     1.0,     0.8,     2.2,     4.5,    14.5,    24.5,   15.0,  0.06540,      0,      0,       0,       0,       0,       0
+t3.delete_tag_entity,                                  42426,    2396,       0,       0,     1.0,     0.7,     2.4,     5.2,     9.1,    12.8,   16.0,  0.06740,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             41516,    2466,     560,     560,     1.0,     0.7,     2.6,     5.3,    12.3,    13.8,   16.0,  0.06740,      0,      0,       0,       0,       0,       0
+total,                                                 83942,    4862,     560,     560,     1.0,     0.7,     2.5,     5.2,    12.2,    13.8,   16.0,  0.06740,      0,      0,       0,       0,       0,       0
+t3.delete_tag_entity,                                  45321,    2895,       0,       0,     0.8,     0.6,     1.8,     2.9,     4.2,     8.8,   17.0,  0.06552,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             44652,    3136,     704,     704,     0.8,     0.7,     1.9,     3.2,     5.7,     7.0,   17.0,  0.06552,      0,      0,       0,       0,       0,       0
+total,                                                 89973,    6031,     704,     704,     0.8,     0.6,     1.9,     3.0,     5.2,     8.8,   17.0,  0.06552,      0,      0,       0,       0,       0,       0
+t3.delete_tag_entity,                                  47764,    2443,       0,       0,     1.0,     0.7,     2.2,     4.1,    13.2,    18.9,   18.0,  0.06706,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             47212,    2560,     526,     526,     1.0,     0.8,     2.4,     3.6,    10.1,    23.3,   18.0,  0.06706,      0,      0,       0,       0,       0,       0
+total,                                                 94976,    5003,     526,     526,     1.0,     0.7,     2.3,     3.8,    11.4,    23.3,   18.0,  0.06706,      0,      0,       0,       0,       0,       0
+t3.delete_tag_entity,                                  50341,    2716,       0,       0,     0.9,     0.7,     2.2,     3.7,     7.1,     8.1,   18.9,  0.06771,      0,      0,       0,       0,       0,       0
+t3.select_entities_by_tag,                             49659,    2579,     545,     545,     0.9,     0.7,     2.0,     3.8,     6.6,     7.4,   18.9,  0.06771,      0,      0,       0,       0,       0,       0
+total,                                                100000,    5295,     545,     545,     0.9,     0.7,     2.1,     3.7,     6.8,     8.1,   18.9,  0.06771,      0,      0,       0,       0,       0,       0
+
+
+Results:
+Op rate                   :    5,277 op/s  [t3.delete_tag_entity: 2,657 op/s, t3.select_entities_by_tag: 2,621 op/s]
+Partition rate            :      846 pk/s  [t3.delete_tag_entity: 0 pk/s, t3.select_entities_by_tag: 846 pk/s]
+Row rate                  :      846 row/s [t3.delete_tag_entity: 0 row/s, t3.select_entities_by_tag: 846 row/s]
+Latency mean              :    0.9 ms [t3.delete_tag_entity: 0.9 ms, t3.select_entities_by_tag: 0.9 ms]
+Latency median            :    0.7 ms [t3.delete_tag_entity: 0.7 ms, t3.select_entities_by_tag: 0.7 ms]
+Latency 95th percentile   :    2.1 ms [t3.delete_tag_entity: 2.0 ms, t3.select_entities_by_tag: 2.1 ms]
+Latency 99th percentile   :    4.0 ms [t3.delete_tag_entity: 4.0 ms, t3.select_entities_by_tag: 4.1 ms]
+Latency 99.9th percentile :   11.6 ms [t3.delete_tag_entity: 11.9 ms, t3.select_entities_by_tag: 11.3 ms]
+Latency max               :   31.1 ms [t3.delete_tag_entity: 31.1 ms, t3.select_entities_by_tag: 30.1 ms]
+Total partitions          :     16,028 [t3.delete_tag_entity: 0, t3.select_entities_by_tag: 16,028]
+Total errors              :          0 [t3.delete_tag_entity: 0, t3.select_entities_by_tag: 0]
+Total GC count            : 0
+Total GC memory           : 0.000 KiB
+Total GC time             :    0.0 seconds
+Avg GC time               :    NaN ms
+StdDev GC time            :    0.0 ms
+Total operation time      : 00:00:18
+
+END

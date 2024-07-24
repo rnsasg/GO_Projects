@@ -1,0 +1,128 @@
+******************** Stress Settings ********************
+Command:
+  Type: user
+  Count: 1,000
+  No Warmup: false
+  Consistency Level: LOCAL_ONE
+  Target Uncertainty: not applicable
+  Command Ratios: {t3.select_entities_by_tag=1.0}
+  Command Clustering Distribution: clustering=gaussian(1..10)
+  Profile File(s): t3_tag_entities.yaml
+Rate:
+  Auto: false
+  Thread Count: 1
+  OpsPer Sec: 0
+Population:
+  Distribution: Gaussian:  min=1,max=1000,mean=500.500000,stdev=166.500000
+  Order: ARBITRARY
+  Wrap: false
+Insert:
+  Revisits: Uniform:  min=1,max=1000000
+  Visits: Fixed:  key=1
+  Row Population Ratio: Ratio: divisor=1.000000;delegate=Fixed:  key=1
+  Batch Type: not batching
+Errors:
+  Ignore: false
+  Tries: 10
+Log:
+  No Summary: false
+  No Settings: false
+  File: tag_entities_1K_1_1_threads.log
+  Interval Millis: 1000
+  Level: NORMAL
+Mode:
+  API: JAVA_DRIVER_NATIVE
+  Connection Style: CQL_PREPARED
+  CQL Version: CQL3
+  Protocol Version: V5
+  Username: null
+  Password: null
+  Auth Provide Class: null
+  Max Pending Per Connection: 128
+  Connections Per Host: 8
+  Compression: NONE
+Node:
+  Nodes: [localhost]
+  Is White List: false
+  Datacenter: null
+Schema:
+  Keyspace: null
+  Replication Strategy: org.apache.cassandra.locator.SimpleStrategy
+  Replication Strategy Options: {replication_factor=1}
+  Table Compression: null
+  Table Compaction Strategy: null
+  Table Compaction Strategy Options: {}
+Transport:
+  truststore=null; truststore-password=null; keystore=null; keystore-password=null; ssl-protocol=TLS; ssl-alg=null; ssl-ciphers=TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA; 
+Port:
+  Native Port: 9042
+  JMX Port: 7199
+Graph:
+  File: tag_entities_1K_threads_1.html
+  Revision: 1
+  Title: NVO_Cassandra_POC_tag_entities_Table_1K_Records_1_Threads
+  Operation: USER
+TokenRange:
+  Wrap: false
+  Split Factor: 1
+
+******************** Profile(s) ********************
+  Keyspace Name: tagging
+  Keyspace CQL: 
+***
+CREATE KEYSPACE IF NOT EXISTS tagging WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+***
+
+  Table Name: tag_entities
+  Table CQL: 
+***
+CREATE TABLE IF NOT EXISTS tag_entities (
+  tag_id UUID,
+  entity_id UUID,
+  PRIMARY KEY (tag_id, entity_id)
+);
+***
+
+  Extra Schema Definitions: null
+  Generator Configs:
+    tag_id: Size: Gaussian:  min=5,max=10,mean=7.500000,stdev=0.833333;Identity: Uniform:  min=1,max=10000000;
+    entity_id: Size: Gaussian:  min=5,max=10,mean=7.500000,stdev=0.833333;Identity: Uniform:  min=1,max=10000000;
+  Query Definitions:
+    select_entities_by_tag: CQL:SELECT * FROM tag_entities WHERE tag_id = ?;Fields:samerow;
+    delete_tag_entity: CQL:DELETE FROM tag_entities WHERE tag_id = ? AND entity_id = ?;Fields:samerow;
+  Token Range Queries:
+  Insert Settings:
+    partitions: fixed(1)
+    select: fixed(1)/500
+    batchtype: UNLOGGED
+Generating batches with [1..1] partitions and [0..0] rows (of [1..1] total rows in the partitions)
+
+Sleeping 2s...
+Warming up t3.select_entities_by_tag with 250 iterations...
+Running [t3.select_entities_by_tag] with 1 threads for 1000 iteration
+type                                               total ops,    op/s,    pk/s,   row/s,    mean,     med,     .95,     .99,    .999,     max,   time,   stderr, errors,  gc: #,  max ms,  sum ms,  sdv ms,      mb
+total,                                                   352,     352,     251,     251,     1.6,     1.2,     3.4,     7.6,    11.5,    11.5,    1.0,  0.00000,      0,      0,       0,       0,       0,       0
+total,                                                   586,     234,     168,     168,     5.3,     0.9,     4.1,    11.5,   942.1,   942.1,    2.0,  0.59339,      0,      0,       0,       0,       0,       0
+total,                                                  1000,     875,     642,     642,     1.1,     0.7,     3.4,     7.1,    10.5,    10.5,    2.5,  0.52938,      0,      0,       0,       0,       0,       0
+
+
+Results:
+Op rate                   :      404 op/s  [t3.select_entities_by_tag: 404 op/s]
+Partition rate            :      292 pk/s  [t3.select_entities_by_tag: 292 pk/s]
+Row rate                  :      292 row/s [t3.select_entities_by_tag: 292 row/s]
+Latency mean              :    2.3 ms [t3.select_entities_by_tag: 2.3 ms]
+Latency median            :    0.9 ms [t3.select_entities_by_tag: 0.9 ms]
+Latency 95th percentile   :    3.4 ms [t3.select_entities_by_tag: 3.4 ms]
+Latency 99th percentile   :    7.8 ms [t3.select_entities_by_tag: 7.8 ms]
+Latency 99.9th percentile :   13.8 ms [t3.select_entities_by_tag: 13.8 ms]
+Latency max               :  942.1 ms [t3.select_entities_by_tag: 942.1 ms]
+Total partitions          :        723 [t3.select_entities_by_tag: 723]
+Total errors              :          0 [t3.select_entities_by_tag: 0]
+Total GC count            : 0
+Total GC memory           : 0.000 KiB
+Total GC time             :    0.0 seconds
+Avg GC time               :    NaN ms
+StdDev GC time            :    0.0 ms
+Total operation time      : 00:00:02
+
+END

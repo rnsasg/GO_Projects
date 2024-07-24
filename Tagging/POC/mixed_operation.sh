@@ -16,8 +16,8 @@
 #OPERATIONS="t3.select_entities_by_tag=1,t3.delete_tag_entity=1"
 
 # Define arrays for records and thread counts
-RECORDS=("10")
-THREADS=("1")
+RECORDS=("1K")
+THREADS=("1" "5")
 
 
 SETS=(

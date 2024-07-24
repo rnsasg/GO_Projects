@@ -1,0 +1,180 @@
+******************** Stress Settings ********************
+Command:
+  Type: user
+  Count: 100,000
+  No Warmup: false
+  Consistency Level: LOCAL_ONE
+  Target Uncertainty: not applicable
+  Command Ratios: {t1.delete_tag_by_id=1.0}
+  Command Clustering Distribution: clustering=gaussian(1..10)
+  Profile File(s): t1_tags.yaml
+Rate:
+  Auto: false
+  Thread Count: 1
+  OpsPer Sec: 0
+Population:
+  Distribution: Gaussian:  min=1,max=100000,mean=50000.500000,stdev=16666.500000
+  Order: ARBITRARY
+  Wrap: false
+Insert:
+  Revisits: Uniform:  min=1,max=1000000
+  Visits: Fixed:  key=1
+  Row Population Ratio: Ratio: divisor=1.000000;delegate=Fixed:  key=1
+  Batch Type: not batching
+Errors:
+  Ignore: false
+  Tries: 10
+Log:
+  No Summary: false
+  No Settings: false
+  File: tags_100K_3_1_threads.log
+  Interval Millis: 1000
+  Level: NORMAL
+Mode:
+  API: JAVA_DRIVER_NATIVE
+  Connection Style: CQL_PREPARED
+  CQL Version: CQL3
+  Protocol Version: V5
+  Username: null
+  Password: null
+  Auth Provide Class: null
+  Max Pending Per Connection: 128
+  Connections Per Host: 8
+  Compression: NONE
+Node:
+  Nodes: [localhost]
+  Is White List: false
+  Datacenter: null
+Schema:
+  Keyspace: null
+  Replication Strategy: org.apache.cassandra.locator.SimpleStrategy
+  Replication Strategy Options: {replication_factor=1}
+  Table Compression: null
+  Table Compaction Strategy: null
+  Table Compaction Strategy Options: {}
+Transport:
+  truststore=null; truststore-password=null; keystore=null; keystore-password=null; ssl-protocol=TLS; ssl-alg=null; ssl-ciphers=TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA; 
+Port:
+  Native Port: 9042
+  JMX Port: 7199
+Graph:
+  File: tags_100K_threads_1.html
+  Revision: 3
+  Title: NVO_Cassandra_POC_tags_Table_100K_Records_1_Threads
+  Operation: USER
+TokenRange:
+  Wrap: false
+  Split Factor: 1
+
+******************** Profile(s) ********************
+  Keyspace Name: tagging
+  Keyspace CQL: 
+***
+CREATE KEYSPACE IF NOT EXISTS tagging WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+***
+
+  Table Name: tags
+  Table CQL: 
+***
+CREATE TABLE IF NOT EXISTS tags (
+  id uuid PRIMARY KEY,
+  owner_id int,
+  name text,
+  description text,
+  properties text
+);
+***
+
+  Extra Schema Definitions: null
+  Generator Configs:
+    owner_id: Size: Gaussian:  min=5,max=10,mean=7.500000,stdev=0.833333;Identity: Uniform:  min=1,max=1000000;
+    name: Size: Uniform:  min=5,max=200;
+    description: Size: Uniform:  min=10,max=100;
+    id: Size: Gaussian:  min=5,max=10,mean=7.500000,stdev=0.833333;Identity: Uniform:  min=1,max=10000000;
+    properties: Size: Uniform:  min=10,max=50;
+  Query Definitions:
+    select_tag_by_id: CQL:SELECT * FROM tags WHERE id = ?;Fields:samerow;
+    update_tag_properties: CQL:UPDATE tags SET properties = ? WHERE id = ?;Fields:samerow;
+    delete_tag_by_id: CQL:DELETE FROM tags WHERE id = ?;Fields:samerow;
+    insert_tag: CQL:INSERT INTO tags (id, owner_id, name, description, properties) VALUES (?, ?, ?, ?, ?);Fields:samerow;
+  Token Range Queries:
+  Insert Settings:
+    partitions: fixed(1)
+    select: fixed(1)/500
+    batchtype: UNLOGGED
+Generating batches with [1..1] partitions and [0..0] rows (of [1..1] total rows in the partitions)
+
+Sleeping 2s...
+Warming up t1.delete_tag_by_id with 25000 iterations...
+Running [t1.delete_tag_by_id] with 1 threads for 100000 iteration
+type                                               total ops,    op/s,    pk/s,   row/s,    mean,     med,     .95,     .99,    .999,     max,   time,   stderr, errors,  gc: #,  max ms,  sum ms,  sdv ms,      mb
+total,                                                   200,     200,       0,       0,     0.4,     0.4,     0.5,     0.7,     2.1,     2.1,    1.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                  2431,    2231,       0,       0,     0.4,     0.4,     0.6,     1.6,     6.1,     8.9,    2.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                  4881,    2450,       0,       0,     0.4,     0.3,     0.5,     1.3,     6.1,    13.0,    3.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                  7152,    2271,       0,       0,     0.4,     0.4,     0.6,     1.5,     6.4,     9.7,    4.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                  8816,    1664,       0,       0,     0.6,     0.4,     0.9,     4.3,    29.7,    73.9,    5.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 10877,    2061,       0,       0,     0.5,     0.4,     0.6,     1.6,     6.3,    10.7,    6.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 13179,    2302,       0,       0,     0.4,     0.4,     0.6,     1.4,     6.7,     7.8,    7.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 15265,    2086,       0,       0,     0.5,     0.4,     0.7,     2.1,     8.9,     9.7,    8.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 17476,    2211,       0,       0,     0.4,     0.4,     0.6,     1.5,     8.0,    11.1,    9.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 19626,    2150,       0,       0,     0.5,     0.4,     0.6,     2.1,     9.1,    11.8,   10.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 22199,    2573,       0,       0,     0.4,     0.3,     0.5,     1.3,     6.2,     9.4,   11.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 24729,    2530,       0,       0,     0.4,     0.4,     0.5,     1.2,     7.8,    10.1,   12.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 26750,    2021,       0,       0,     0.5,     0.4,     0.7,     2.8,     8.6,     9.7,   13.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 28733,    1983,       0,       0,     0.5,     0.4,     0.7,     1.7,    11.5,    17.9,   14.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 30699,    1966,       0,       0,     0.5,     0.4,     0.7,     2.6,     9.1,     9.5,   15.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 33013,    2314,       0,       0,     0.4,     0.4,     0.6,     1.5,     4.4,     6.4,   16.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 35308,    2295,       0,       0,     0.4,     0.4,     0.6,     1.4,     6.6,    10.7,   17.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 37437,    2129,       0,       0,     0.5,     0.4,     0.6,     1.7,     9.8,    13.0,   18.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 39613,    2176,       0,       0,     0.5,     0.4,     0.6,     1.4,     6.5,     9.7,   19.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 41185,    1572,       0,       0,     0.6,     0.4,     0.7,     3.0,     9.9,   224.9,   20.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 43446,    2261,       0,       0,     0.4,     0.4,     0.6,     1.2,     6.3,    10.2,   21.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 45597,    2151,       0,       0,     0.5,     0.4,     0.6,     1.3,     4.0,    13.2,   22.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 47680,    2083,       0,       0,     0.5,     0.4,     0.6,     1.5,     5.5,     9.8,   23.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 49839,    2159,       0,       0,     0.5,     0.4,     0.6,     1.4,     9.2,    58.6,   24.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 52098,    2259,       0,       0,     0.4,     0.4,     0.6,     1.8,     9.4,    13.3,   25.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 54542,    2444,       0,       0,     0.4,     0.4,     0.5,     1.3,     2.8,     6.7,   26.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 56073,    1531,       0,       0,     0.6,     0.4,     0.6,     1.4,     9.6,   305.1,   27.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 58023,    1950,       0,       0,     0.5,     0.5,     0.7,     1.8,     6.8,    10.3,   28.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 60250,    2227,       0,       0,     0.4,     0.4,     0.6,     1.5,     5.1,     7.6,   29.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 62261,    2011,       0,       0,     0.5,     0.4,     0.7,     2.8,    10.0,    11.4,   30.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 64370,    2109,       0,       0,     0.5,     0.4,     0.7,     1.6,     4.5,     6.5,   31.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 66581,    2211,       0,       0,     0.4,     0.4,     0.6,     1.6,     7.0,     8.0,   32.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 68053,    1472,       0,       0,     0.7,     0.4,     0.7,     2.1,    87.5,   138.4,   33.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 70470,    2417,       0,       0,     0.4,     0.4,     0.5,     1.3,     6.8,     8.9,   34.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 72612,    2142,       0,       0,     0.5,     0.4,     0.7,     2.3,     8.3,    12.5,   35.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 74598,    1986,       0,       0,     0.5,     0.4,     0.7,     1.5,    10.4,    11.0,   36.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 76807,    2209,       0,       0,     0.4,     0.4,     0.6,     1.4,     6.2,    10.0,   37.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 79081,    2274,       0,       0,     0.4,     0.4,     0.6,     1.5,     5.1,    10.4,   38.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 81381,    2300,       0,       0,     0.4,     0.4,     0.6,     1.4,     6.8,    11.6,   39.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 83258,    1877,       0,       0,     0.5,     0.4,     0.7,     3.1,     9.8,    10.4,   40.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 85455,    2197,       0,       0,     0.4,     0.4,     0.6,     1.4,     4.5,     5.7,   41.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 87837,    2382,       0,       0,     0.4,     0.4,     0.5,     1.4,     4.0,    15.9,   42.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 90167,    2330,       0,       0,     0.4,     0.4,     0.6,     1.3,     6.3,    10.0,   43.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 92586,    2419,       0,       0,     0.4,     0.4,     0.6,     1.4,     5.3,     6.8,   44.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 94820,    2234,       0,       0,     0.4,     0.4,     0.7,     2.3,     9.6,    13.9,   45.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 97173,    2353,       0,       0,     0.4,     0.4,     0.6,     1.3,     6.8,    15.7,   46.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                 99469,    2296,       0,       0,     0.4,     0.4,     0.6,     1.6,     8.6,    12.9,   47.0,      NaN,      0,      0,       0,       0,       0,       0
+total,                                                100000,    2116,       0,       0,     0.5,     0.4,     0.7,     1.6,     4.3,     4.3,   47.3,      NaN,      0,      0,       0,       0,       0,       0
+
+
+Results:
+Op rate                   :    2,116 op/s  [t1.delete_tag_by_id: 2,116 op/s]
+Partition rate            :        0 pk/s  [t1.delete_tag_by_id: 0 pk/s]
+Row rate                  :        0 row/s [t1.delete_tag_by_id: 0 row/s]
+Latency mean              :    0.5 ms [t1.delete_tag_by_id: 0.5 ms]
+Latency median            :    0.4 ms [t1.delete_tag_by_id: 0.4 ms]
+Latency 95th percentile   :    0.6 ms [t1.delete_tag_by_id: 0.6 ms]
+Latency 99th percentile   :    1.6 ms [t1.delete_tag_by_id: 1.6 ms]
+Latency 99.9th percentile :    7.9 ms [t1.delete_tag_by_id: 7.9 ms]
+Latency max               :  305.1 ms [t1.delete_tag_by_id: 305.1 ms]
+Total partitions          :          0 [t1.delete_tag_by_id: 0]
+Total errors              :          0 [t1.delete_tag_by_id: 0]
+Total GC count            : 0
+Total GC memory           : 0.000 KiB
+Total GC time             :    0.0 seconds
+Avg GC time               :    NaN ms
+StdDev GC time            :    0.0 ms
+Total operation time      : 00:00:47
+
+END
