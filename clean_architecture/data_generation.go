@@ -2,12 +2,11 @@ package main
 
 import (
 	"fmt"
+	"github.com/gocql/gocql"
+	"github.com/google/uuid"
 	"log"
 	"math/rand"
 	"time"
-
-	"github.com/gocql/gocql"
-	"github.com/google/uuid"
 )
 
 func randomString(length int) string {
@@ -65,12 +64,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Random number generator
 	rand.Seed(time.Now().UnixNano())
 
 	// Generate and insert 1 million records into 'tags' table
-	for i := 0; i < 1000000; i++ {
-		tagID := uuid.New()
+	for i := 0; i < 10; i++ {
+		tagID, _ := gocql.ParseUUID(uuid.New().String())
 		ownerID := rand.Intn(1000) + 1
 		name := randomString(15)
 		description := randomString(50)
@@ -85,8 +83,8 @@ func main() {
 	}
 
 	// Generate and insert 1 million records into 'entities' table
-	for i := 0; i < 1000000; i++ {
-		entityID := uuid.New()
+	for i := 0; i < 10; i++ {
+		entityID, _ := gocql.ParseUUID(uuid.New().String())
 		name := randomString(15)
 		entityType := randomString(10)
 		metadata := randomString(100)
@@ -106,6 +104,7 @@ func main() {
 	iter := session.Query(`SELECT id FROM tags`).Iter()
 	var id gocql.UUID
 	for iter.Scan(&id) {
+		id, _ := gocql.ParseUUID(uuid.New().String())
 		tagIDs = append(tagIDs, id)
 	}
 	if err := iter.Close(); err != nil {
@@ -114,6 +113,7 @@ func main() {
 
 	iter = session.Query(`SELECT id FROM entities`).Iter()
 	for iter.Scan(&id) {
+		id, _ := gocql.ParseUUID(uuid.New().String())
 		entityIDs = append(entityIDs, id)
 	}
 	if err := iter.Close(); err != nil {
@@ -121,9 +121,11 @@ func main() {
 	}
 
 	// Generate and insert records into 'tag_entities' table using IDs from 'tags' and 'entities'
-	for i := 0; i < 1000000; i++ {
-		tagID := tagIDs[rand.Intn(len(tagIDs))]
-		entityID := entityIDs[rand.Intn(len(entityIDs))]
+	for i := 0; i < 10; i++ {
+		//entityID,_:= gocql.ParseUUID(uuid.New().String())
+		tagID, _ := gocql.ParseUUID(tagIDs[rand.Intn(len(tagIDs))].String())
+		entityID, _ := gocql.ParseUUID(entityIDs[rand.Intn(len(entityIDs))].String())
+
 		if err := session.Query(`INSERT INTO tag_entities (tag_id, entity_id) VALUES (?, ?)`,
 			tagID, entityID).Exec(); err != nil {
 			log.Fatal(err)

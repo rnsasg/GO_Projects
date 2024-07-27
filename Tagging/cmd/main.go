@@ -17,7 +17,7 @@ func main() {
 	//config.LoadConfig()
 
 	// Create a cassandra session
-	cluster := gocql.NewCluster("172.17.0.2:9042")
+	cluster := gocql.NewCluster("127.0.0.1")
 	cluster.Keyspace = "tagging"
 
 	session, err := cluster.CreateSession()
