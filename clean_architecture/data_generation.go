@@ -67,7 +67,7 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 
 	// Generate and insert 1 million records into 'tags' table
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 1000000; i++ {
 		tagID, _ := gocql.ParseUUID(uuid.New().String())
 		ownerID := rand.Intn(1000) + 1
 		name := randomString(15)
@@ -83,7 +83,7 @@ func main() {
 	}
 
 	// Generate and insert 1 million records into 'entities' table
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 1000000; i++ {
 		entityID, _ := gocql.ParseUUID(uuid.New().String())
 		name := randomString(15)
 		entityType := randomString(10)
@@ -121,7 +121,7 @@ func main() {
 	}
 
 	// Generate and insert records into 'tag_entities' table using IDs from 'tags' and 'entities'
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 1000000; i++ {
 		//entityID,_:= gocql.ParseUUID(uuid.New().String())
 		tagID, _ := gocql.ParseUUID(tagIDs[rand.Intn(len(tagIDs))].String())
 		entityID, _ := gocql.ParseUUID(entityIDs[rand.Intn(len(entityIDs))].String())
