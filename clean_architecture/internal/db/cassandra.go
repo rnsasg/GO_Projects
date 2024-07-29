@@ -22,11 +22,6 @@ func NewCassandra() (*Cassandra, error) {
 		return nil, fmt.Errorf("failed to connect to Cassandra: %w", err)
 	}
 
-	if err := createSchema(session); err != nil {
-		session.Close() // Ensure session is closed on error
-		return nil, err
-	}
-
 	return &Cassandra{Session: session}, nil
 }
 
@@ -36,39 +31,51 @@ func (c *Cassandra) Close() {
 	}
 }
 
-func createSchema(session *gocql.Session) error {
-	if err := session.Query(`CREATE KEYSPACE IF NOT EXISTS tagging 
-		WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 1}`).Exec(); err != nil {
+func (c *Cassandra) createSchema() error {
+
+	if err := c.ExecuteQuery(keyspaceCreationQuery); err != nil {
+		c.Session.Close()
 		return fmt.Errorf("failed to create keyspace: %w", err)
 	}
 
-	tableQueries := []string{
-		`CREATE TABLE IF NOT EXISTS tags (
-			id UUID PRIMARY KEY,
-			owner_id INT,
-			name TEXT,
-			description TEXT,
-			properties TEXT
-		)`,
-		`CREATE TABLE IF NOT EXISTS entities (
-			id UUID PRIMARY KEY,
-			name TEXT,
-			type TEXT,
-			metadata TEXT
-		)`,
-		`CREATE TABLE IF NOT EXISTS tag_entities (
-			tag_id UUID,
-			entity_id UUID,
-			PRIMARY KEY (tag_id, entity_id)
-		)`,
-	}
-
 	for _, query := range tableQueries {
-		if err := session.Query(query).Exec(); err != nil {
+		if err := c.ExecuteQuery(query); err != nil {
+			// Ensure session is closed on error
+			c.Session.Close()
 			return fmt.Errorf("failed to create table with query [%s]: %w", query, err)
 		}
 	}
 
 	log.Println("Schema created successfully.")
 	return nil
+}
+
+func (c *Cassandra) TruncateTable(tables []string) error {
+	for _, table := range tables {
+		if err := c.ExecuteQuery(fmt.Sprintf("truncate %s", table)); err != nil {
+			return fmt.Errorf("failed to truncate table: %s , %w", table, err)
+		}
+	}
+	return nil
+}
+
+func (c *Cassandra) DropTable(tables []string) error {
+	for _, table := range tables {
+		if err := c.ExecuteQuery(fmt.Sprintf("truncate %s", table)); err != nil {
+			return fmt.Errorf("failed to truncate table: %s , %w", table, err)
+		}
+	}
+	return nil
+}
+
+func (c *Cassandra) ExecuteQuery(query string, values ...interface{}) error {
+	if err := c.Session.Query(query, values...).Bind(values...).Exec(); err != nil {
+		log.Fatal(err)
+		return err
+	}
+	return nil
+}
+
+func (c *Cassandra) Iterator(query string, values ...interface{}) *gocql.Iter {
+	return c.Session.Query(query, values...).Bind(values...).Iter()
 }

@@ -1,13 +1,37 @@
+## Queries
+
+1. Add Entities to a Tag
+    INSERT INTO tag_entities (tag_id, entity_id) VALUES (?, ?);
+2. Delete Entities from a Tag
+    DELETE FROM tag_entities WHERE tag_id = ? AND entity_id = ?;
+3. GetTags
+    SELECT * FROM tags;
+4. GetTagDetails
+    SELECT * FROM tags WHERE id = ?;
+5. GetTagsWithMatchingEntityType
+    SELECT id FROM entities WHERE type = ?;
+6. GetTagsWithMatchingEntityId
+   SELECT tag_id FROM tag_entities WHERE entity_id = ?;
+
+## Truncate table
+
+truncate entities;
+truncate tag_entities;
+truncate tags;
+
+########################################################################################################################
+
 docker run --rm --network cassandra -v "$(pwd)/data.cql:/scripts/data.cql" -e CQLSH_HOST=cassandra -e CQLSH_PORT=9042 -e CQLVERSION=3.4.6 nuvo/docker-cqlsh
 
 docker run --rm --network cassandra -v "$(pwd)/data.cql:/scripts/data.cql" -e CQLSH_HOST=cassandra -e CQLSH_PORT=9042 -e CQLVERSION=3.4.6 nuvo/docker-cqlsh
 
 docker run --rm -it --network cassandra nuvo/docker-cqlsh cqlsh cassandra 9042 --cqlversion='3.4.5'
 
-
 SELECT * FROM store.shopping_cart;
 
 INSERT INTO store.shopping_cart (userid, item_count) VALUES ('4567', 20);
+
+########################################################################################################################
 
 docker kill cassandra
 docker network rm cassandra

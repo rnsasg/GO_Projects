@@ -3,11 +3,16 @@ package services
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/rnsasg/clean_architecture/internal/models"
 	"github.com/rnsasg/clean_architecture/internal/repositories"
 )
+
+type TagRepo *repositories.TagRepository
+type EntityRepo *repositories.EntityRepository
+type TagEntityRepo *repositories.TagEntityRepository
 
 type JSONLoaderService struct {
 	TagRepo       *repositories.TagRepository
@@ -75,5 +80,23 @@ func (s *JSONLoaderService) LoadTagEntitiesFromJSON(filepath string) error {
 		}
 	}
 
+	return nil
+}
+
+func (s *JSONLoaderService) LoadFromJSON() error {
+
+	if err := s.LoadTagsFromJSON(TagJSONFile); err != nil {
+		log.Fatalf("Error loading tags from JSON: %v", err)
+		return err
+	}
+	if err := s.LoadEntitiesFromJSON(EntityJSONFile); err != nil {
+		log.Fatalf("Error loading entities from JSON: %v", err)
+		return err
+	}
+	if err := s.LoadTagEntitiesFromJSON(TagEntitiesJSONFile); err != nil {
+		log.Fatalf("Error loading tag_entities from JSON: %v", err)
+		return err
+	}
+	log.Println("Data loaded from JSON files.")
 	return nil
 }
