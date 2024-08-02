@@ -2,10 +2,7 @@ module github.com/rnsasg/clean_architecture
 
 go 1.20
 
-require (
-	github.com/gocql/gocql v1.6.0
-	github.com/google/uuid v1.6.0
-)
+require github.com/gocql/gocql v1.6.0
 
 require (
 	github.com/golang/snappy v0.0.3 // indirect

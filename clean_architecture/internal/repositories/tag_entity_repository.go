@@ -61,13 +61,17 @@ func (r *TagEntityRepository) SaveTagEntitiesToJSONFromDB(filename string) error
 	return nil
 }
 
-func (r *TagEntityRepository) GenerateTagEntities(filename string, size int, tagIDs, entityIDs []gocql.UUID) {
+func (r *TagEntityRepository) GenerateTagEntities(filename string, size int, jsonflag bool, tagIDs, entityIDs []gocql.UUID) {
 
-	jsonFile, err := os.Create(filename)
-	if err != nil {
-		log.Fatal("Could not create JSON file:", err)
+	var err error
+	var jsonFile *os.File
+	if jsonflag == true {
+		jsonFile, err = os.Create(filename)
+		if err != nil {
+			log.Fatal("Could not create JSON file:", err)
+		}
+		defer jsonFile.Close()
 	}
-	defer jsonFile.Close()
 
 	var tagEntities []models.TagEntity
 
@@ -93,12 +97,14 @@ func (r *TagEntityRepository) GenerateTagEntities(filename string, size int, tag
 		}
 	}
 
-	// Write JSON file
-	jsonData, err := json.Marshal(tagEntities)
-	if err != nil {
-		log.Fatal("Error marshalling data to JSON:", err)
+	if jsonflag == true {
+		// Write JSON file
+		jsonData, err := json.Marshal(tagEntities)
+		if err != nil {
+			log.Fatal("Error marshalling data to JSON:", err)
+		}
+		jsonFile.Write(jsonData)
 	}
-	jsonFile.Write(jsonData)
 
 	fmt.Println("TagEntities data generation completed and saved to files.")
 }

@@ -64,7 +64,7 @@ func (r *EntityRepository) SaveEntitiesToJSONFROMDB(filename string) error {
 	return nil
 }
 
-func (r *EntityRepository) GetAllEntityIDs(session *gocql.Session) []gocql.UUID {
+func (r *EntityRepository) GetAllEntityIDs() []gocql.UUID {
 	var entityIDs []gocql.UUID
 	iter := r.cassandra.Iterator(`SELECT id FROM entities`)
 	var id gocql.UUID
@@ -77,14 +77,18 @@ func (r *EntityRepository) GetAllEntityIDs(session *gocql.Session) []gocql.UUID 
 	return entityIDs
 }
 
-func (r *EntityRepository) GenerateEntities(filename string, size int) {
+func (r *EntityRepository) GenerateEntities(filename string, size int, jsonflag bool) {
 	rand.Seed(time.Now().UnixNano())
 
-	jsonFile, err := os.Create(filename)
-	if err != nil {
-		log.Fatal("Could not create JSON file:", err)
+	var err error
+	var jsonFile *os.File
+	if jsonflag == true {
+		jsonFile, err = os.Create(filename)
+		if err != nil {
+			log.Fatal("Could not create JSON file:", err)
+		}
+		defer jsonFile.Close()
 	}
-	defer jsonFile.Close()
 
 	var entities []models.Entity
 
@@ -101,13 +105,15 @@ func (r *EntityRepository) GenerateEntities(filename string, size int) {
 			log.Fatal(err)
 		}
 
-		// Append to JSON array
-		entities = append(entities, models.Entity{
-			ID:       entityID,
-			Name:     name,
-			Type:     entityType,
-			Metadata: metadata,
-		})
+		if jsonflag == true {
+			// Append to JSON array
+			entities = append(entities, models.Entity{
+				ID:       entityID,
+				Name:     name,
+				Type:     entityType,
+				Metadata: metadata,
+			})
+		}
 
 		if i%1000 == 0 {
 			fmt.Printf("Inserted and saved %d records\n", i+1)
@@ -115,11 +121,13 @@ func (r *EntityRepository) GenerateEntities(filename string, size int) {
 	}
 
 	// Write JSON file
-	jsonData, err := json.Marshal(entities)
-	if err != nil {
-		log.Fatal("Error marshalling data to JSON:", err)
+	if jsonflag == true {
+		jsonData, err := json.Marshal(entities)
+		if err != nil {
+			log.Fatal("Error marshalling data to JSON:", err)
+		}
+		jsonFile.Write(jsonData)
 	}
-	jsonFile.Write(jsonData)
 
 	fmt.Println("Data generation completed and saved to files.")
 }

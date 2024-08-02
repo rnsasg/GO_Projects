@@ -11,9 +11,9 @@ type DataGeneratorService struct {
 	TagEntityRepo *repositories.TagEntityRepository
 }
 
-func (s *DataGeneratorService) GenerateData(cassandra db.Cassandra, size int) error {
-	s.TagRepo.GenerateTags(TagJSONFile, size)
-	s.EntityRepo.GenerateEntities(EntityJSONFile, size)
-	s.TagEntityRepo.GenerateTagEntities(TagEntitiesJSONFile, size, s.TagRepo.GetAllTagIDs(cassandra.Session), s.EntityRepo.GetAllEntityIDs(cassandra.Session))
+func (s *DataGeneratorService) GenerateData(cassandra db.Cassandra, size int, json bool) error {
+	s.TagRepo.GenerateTags(TagJSONFile, size, json)
+	s.EntityRepo.GenerateEntities(EntityJSONFile, size, json)
+	s.TagEntityRepo.GenerateTagEntities(TagEntitiesJSONFile, size, json, s.TagRepo.GetAllTagIDs(), s.EntityRepo.GetAllEntityIDs())
 	return nil
 }

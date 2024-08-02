@@ -61,7 +61,7 @@ func (r *TagRepository) SaveTagsToJSONFromDB(filename string) error {
 	return nil
 }
 
-func (r *TagRepository) GetAllTagIDs(session *gocql.Session) []gocql.UUID {
+func (r *TagRepository) GetAllTagIDs() []gocql.UUID {
 	var tagIDs []gocql.UUID
 	iter := r.cassandra.Iterator(`SELECT id FROM tags`)
 	var id gocql.UUID
@@ -74,13 +74,17 @@ func (r *TagRepository) GetAllTagIDs(session *gocql.Session) []gocql.UUID {
 	return tagIDs
 }
 
-func (r *TagRepository) GenerateTags(filename string, size int) {
+func (r *TagRepository) GenerateTags(filename string, size int, jsonflag bool) {
 
-	jsonFile, err := os.Create(filename)
-	if err != nil {
-		log.Fatal("Could not create JSON file:", err)
+	var err error
+	var jsonFile *os.File
+	if jsonflag == true {
+		jsonFile, err = os.Create(filename)
+		if err != nil {
+			log.Fatal("Could not create JSON file:", err)
+		}
+		defer jsonFile.Close()
 	}
-	defer jsonFile.Close()
 
 	var tags []models.Tag
 
@@ -98,26 +102,30 @@ func (r *TagRepository) GenerateTags(filename string, size int) {
 			log.Fatal(err)
 		}
 
-		// Append to JSON array
-		tags = append(tags, models.Tag{
-			ID:          tagID,
-			OwnerID:     ownerID,
-			Name:        name,
-			Description: description,
-			Properties:  properties,
-		})
+		if jsonflag == true {
+			// Append to JSON array
+			tags = append(tags, models.Tag{
+				ID:          tagID,
+				OwnerID:     ownerID,
+				Name:        name,
+				Description: description,
+				Properties:  properties,
+			})
+		}
 
 		if i%1000 == 0 {
 			fmt.Printf("Inserted and saved %d records\n", i+1)
 		}
 	}
 
-	// Write JSON file
-	jsonData, err := json.Marshal(tags)
-	if err != nil {
-		log.Fatal("Error marshalling data to JSON:", err)
+	if jsonflag == true {
+		// Write JSON file
+		jsonData, err := json.Marshal(tags)
+		if err != nil {
+			log.Fatal("Error marshalling data to JSON:", err)
+		}
+		jsonFile.Write(jsonData)
 	}
-	jsonFile.Write(jsonData)
 
 	fmt.Println("Tags data generation completed and saved to files.")
 }

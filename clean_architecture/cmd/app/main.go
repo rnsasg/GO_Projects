@@ -40,7 +40,7 @@ func main() {
 			EntityRepo:    entityRepo,
 			TagEntityRepo: tagEntityRepo,
 		}
-		dataGenerator.GenerateData(*cassandra, datasize)
+		dataGenerator.GenerateData(*cassandra, datasize, true)
 
 	} else if *loadFromJSON {
 		// Load data from JSON files
