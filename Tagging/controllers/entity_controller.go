@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gocql/gocql"
 	"github.com/gorilla/mux"
 	"github.com/rnsasg/Tagging/models"
@@ -14,10 +15,12 @@ type EntityController struct {
 }
 
 func NewEntityController(entiryService services.EntityService) *EntityController {
+	fmt.Println("NewEntityController")
 	return &EntityController{entiryService}
 }
 
 func (c *EntityController) CreateEntity(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("CreateEntity")
 	var entity models.Entity
 	if err := json.NewDecoder(r.Body).Decode(&entity); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -32,6 +35,7 @@ func (c *EntityController) CreateEntity(w http.ResponseWriter, r *http.Request) 
 }
 
 func (c *EntityController) DeleteEntity(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("DeleteEntity")
 	params := mux.Vars(r)
 	id, _ := gocql.ParseUUID(params["id"])
 
@@ -43,6 +47,7 @@ func (c *EntityController) DeleteEntity(w http.ResponseWriter, r *http.Request) 
 }
 
 func (c *EntityController) GetEntity(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("GetEntity")
 	params := mux.Vars(r)
 	id, _ := gocql.ParseUUID(params["id"])
 	entity, err := c.entityService.GetEntityByID(id)
@@ -55,6 +60,7 @@ func (c *EntityController) GetEntity(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *EntityController) GetAllEntities(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("GetAllEntities")
 	entities, err := c.entityService.GetAllEntities()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -64,6 +70,7 @@ func (c *EntityController) GetAllEntities(w http.ResponseWriter, r *http.Request
 }
 
 func (c *EntityController) UpdateEntity(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("UpdateEntity")
 	params := mux.Vars(r)
 	id, _ := gocql.ParseUUID(params["id"])
 	var entity models.Entity

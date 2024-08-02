@@ -64,7 +64,11 @@ func (r *EntityRepository) SaveEntitiesToJSONFROMDB(filename string) error {
 	return nil
 }
 
+<<<<<<< HEAD
 func (r *EntityRepository) GetAllEntityIDs() []gocql.UUID {
+=======
+func (r *EntityRepository) GetAllEntityIDs(session *gocql.Session) []gocql.UUID {
+>>>>>>> 4128a271e7e9468cd9ffe65590ac94cbe867a96d
 	var entityIDs []gocql.UUID
 	iter := r.cassandra.Iterator(`SELECT id FROM entities`)
 	var id gocql.UUID
@@ -77,6 +81,7 @@ func (r *EntityRepository) GetAllEntityIDs() []gocql.UUID {
 	return entityIDs
 }
 
+<<<<<<< HEAD
 func (r *EntityRepository) GenerateEntities(filename string, size int, jsonflag bool) {
 	rand.Seed(time.Now().UnixNano())
 
@@ -89,6 +94,16 @@ func (r *EntityRepository) GenerateEntities(filename string, size int, jsonflag 
 		}
 		defer jsonFile.Close()
 	}
+=======
+func (r *EntityRepository) GenerateEntities(filename string, size int) {
+	rand.Seed(time.Now().UnixNano())
+
+	jsonFile, err := os.Create(filename)
+	if err != nil {
+		log.Fatal("Could not create JSON file:", err)
+	}
+	defer jsonFile.Close()
+>>>>>>> 4128a271e7e9468cd9ffe65590ac94cbe867a96d
 
 	var entities []models.Entity
 
@@ -105,6 +120,7 @@ func (r *EntityRepository) GenerateEntities(filename string, size int, jsonflag 
 			log.Fatal(err)
 		}
 
+<<<<<<< HEAD
 		if jsonflag == true {
 			// Append to JSON array
 			entities = append(entities, models.Entity{
@@ -114,6 +130,15 @@ func (r *EntityRepository) GenerateEntities(filename string, size int, jsonflag 
 				Metadata: metadata,
 			})
 		}
+=======
+		// Append to JSON array
+		entities = append(entities, models.Entity{
+			ID:       entityID,
+			Name:     name,
+			Type:     entityType,
+			Metadata: metadata,
+		})
+>>>>>>> 4128a271e7e9468cd9ffe65590ac94cbe867a96d
 
 		if i%1000 == 0 {
 			fmt.Printf("Inserted and saved %d records\n", i+1)
@@ -121,6 +146,7 @@ func (r *EntityRepository) GenerateEntities(filename string, size int, jsonflag 
 	}
 
 	// Write JSON file
+<<<<<<< HEAD
 	if jsonflag == true {
 		jsonData, err := json.Marshal(entities)
 		if err != nil {
@@ -128,6 +154,13 @@ func (r *EntityRepository) GenerateEntities(filename string, size int, jsonflag 
 		}
 		jsonFile.Write(jsonData)
 	}
+=======
+	jsonData, err := json.Marshal(entities)
+	if err != nil {
+		log.Fatal("Error marshalling data to JSON:", err)
+	}
+	jsonFile.Write(jsonData)
+>>>>>>> 4128a271e7e9468cd9ffe65590ac94cbe867a96d
 
 	fmt.Println("Data generation completed and saved to files.")
 }
