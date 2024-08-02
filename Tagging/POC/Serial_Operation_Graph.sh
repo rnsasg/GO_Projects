@@ -9,10 +9,10 @@ SETS=(
     "t1 tags ops(t1.select_tag_by_id=1) ops(t1.update_tag_properties=1) ops(t1.delete_tag_by_id=1)"
 
     # Set 2: Entities table
-    # "t2 entities ops(t2.select_entity_by_id=1) ops(t2.update_entity_name=1) ops(t2.delete_entity_by_id=1)"
+    "t2 entities ops(t2.select_entity_by_id=1) ops(t2.update_entity_name=1) ops(t2.delete_entity_by_id=1)"
 
     # Set 3: TAG Entities Table
-    # "t3 tag_entities ops(t3.select_entities_by_tag=1) ops(t3.delete_tag_entity=1)"
+     "t3 tag_entities ops(t3.select_entities_by_tag=1) ops(t3.delete_tag_entity=1)"
 )
 
 
