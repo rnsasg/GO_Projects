@@ -1,0 +1,16 @@
+docker build -t mongodb-image -f Dockerfile.mongo .
+
+docker run -d --name mongodb-container -p 27017:27017 mongodb-image
+
+
+docker build -t cassandra-image -f Dockerfile.cassandra .
+
+docker run -d --name cassandra-container -p 9042:9042 cassandra-image
+
+
+docker build -t ycsb-benchmark -f Dockerfile.ycsb
+
+
+docker run -it ycsb-benchmark
+
+

@@ -1,0 +1,49 @@
+# Basic settings
+cluster_name: MyTestCluster
+
+# Network settings
+rpc_address: 0.0.0.0
+listen_address: "cassandra1"
+broadcast_rpc_address: "cassandra1"
+broadcast_address: "cassandra1"
+
+## Seed
+seed_provider:
+  - class_name: org.apache.cassandra.locator.SimpleSeedProvider
+    parameters:
+      - seeds: "cassandra1,cassandra3"
+
+# Snitch settings
+endpoint_snitch: GossipingPropertyFileSnitch
+
+# Other settings (mostly defaults, but you can adjust as needed)
+num_tokens: 128
+storage_port: 7000
+native_transport_port: 9042
+partitioner: org.apache.cassandra.dht.Murmur3Partitioner
+
+# Batching
+batch_size_warn_threshold: 9000KiB
+batch_size_fail_threshold: 10000KiB
+
+# Commit Log Sync
+commitlog_sync: periodic
+commitlog_sync_period: 10000ms
+commitlog_segment_size: 32MiB
+
+
+## data
+data_file_directories:
+  - /var/lib/cassandra/data
+commitlog_directory: /var/lib/cassandra/commitlog
+saved_caches_directory: /var/lib/cassandra/saved_cache
+
+# Timeout for read requests
+# read_request_timeout_in_ms: 5000
+read_request_timeout_in_sec: 50
+
+# General request timeout
+request_timeout_in_ms: 10000
+
+# Timeout for range queries
+range_request_timeout_in_ms: 50000

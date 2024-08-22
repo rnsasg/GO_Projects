@@ -1,0 +1,8 @@
+# Use the official Cassandra image as a base
+FROM cassandra:latest
+
+# Expose the default Cassandra port
+EXPOSE 9042
+
+# Default command to run Cassandra
+CMD ["cassandra", "-f"]
