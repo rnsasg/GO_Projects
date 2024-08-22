@@ -61,11 +61,7 @@ func (r *TagRepository) SaveTagsToJSONFromDB(filename string) error {
 	return nil
 }
 
-<<<<<<< HEAD
 func (r *TagRepository) GetAllTagIDs() []gocql.UUID {
-=======
-func (r *TagRepository) GetAllTagIDs(session *gocql.Session) []gocql.UUID {
->>>>>>> 4128a271e7e9468cd9ffe65590ac94cbe867a96d
 	var tagIDs []gocql.UUID
 	iter := r.cassandra.Iterator(`SELECT id FROM tags`)
 	var id gocql.UUID
@@ -78,7 +74,6 @@ func (r *TagRepository) GetAllTagIDs(session *gocql.Session) []gocql.UUID {
 	return tagIDs
 }
 
-<<<<<<< HEAD
 func (r *TagRepository) GenerateTags(filename string, size int, jsonflag bool) {
 
 	var err error
@@ -90,15 +85,6 @@ func (r *TagRepository) GenerateTags(filename string, size int, jsonflag bool) {
 		}
 		defer jsonFile.Close()
 	}
-=======
-func (r *TagRepository) GenerateTags(filename string, size int) {
-
-	jsonFile, err := os.Create(filename)
-	if err != nil {
-		log.Fatal("Could not create JSON file:", err)
-	}
-	defer jsonFile.Close()
->>>>>>> 4128a271e7e9468cd9ffe65590ac94cbe867a96d
 
 	var tags []models.Tag
 
@@ -116,7 +102,6 @@ func (r *TagRepository) GenerateTags(filename string, size int) {
 			log.Fatal(err)
 		}
 
-<<<<<<< HEAD
 		if jsonflag == true {
 			// Append to JSON array
 			tags = append(tags, models.Tag{
@@ -127,23 +112,12 @@ func (r *TagRepository) GenerateTags(filename string, size int) {
 				Properties:  properties,
 			})
 		}
-=======
-		// Append to JSON array
-		tags = append(tags, models.Tag{
-			ID:          tagID,
-			OwnerID:     ownerID,
-			Name:        name,
-			Description: description,
-			Properties:  properties,
-		})
->>>>>>> 4128a271e7e9468cd9ffe65590ac94cbe867a96d
 
 		if i%1000 == 0 {
 			fmt.Printf("Inserted and saved %d records\n", i+1)
 		}
 	}
 
-<<<<<<< HEAD
 	if jsonflag == true {
 		// Write JSON file
 		jsonData, err := json.Marshal(tags)
@@ -152,14 +126,6 @@ func (r *TagRepository) GenerateTags(filename string, size int) {
 		}
 		jsonFile.Write(jsonData)
 	}
-=======
-	// Write JSON file
-	jsonData, err := json.Marshal(tags)
-	if err != nil {
-		log.Fatal("Error marshalling data to JSON:", err)
-	}
-	jsonFile.Write(jsonData)
->>>>>>> 4128a271e7e9468cd9ffe65590ac94cbe867a96d
 
 	fmt.Println("Tags data generation completed and saved to files.")
 }
