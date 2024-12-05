@@ -40,7 +40,7 @@ func main() {
 	defer file.Close()
 
 	// Create a logger that writes to the log file
-	logger := slog.New(slog.NewTextHandler(file, nil))
+	logger := slog.New(slog.NewJSONHandler(file, nil))
 
 	// Continuous loop to generate logs
 	for {
